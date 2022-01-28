@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Auth } from 'aws-amplify';
+import { PostService } from './post.service';
 
 @Component({
   selector: 'app-posts',
@@ -7,9 +9,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PostsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private postService: PostService) { }
 
   ngOnInit(): void {
+    Auth.currentAuthenticatedUser({
+      bypassCache: false
+    })
+    .then(user => {
+      this.postService.isAuthenticated.next(true);
+    })
+    .catch(err => {
+      console.log(err);
+      this.postService.isAuthenticated.next(false);
+    });
   }
 
 }

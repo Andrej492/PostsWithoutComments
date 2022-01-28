@@ -2,6 +2,7 @@ const AWS = require('aws-sdk')
 var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 var bodyParser = require('body-parser')
 var express = require('express')
+const { v4: uuidv4 } = require('uuid')
 
 AWS.config.update({ region: process.env.TABLE_REGION });
 
@@ -100,10 +101,29 @@ app.get("/posts/:id", function(request, response) {
   });
 });
 
+app.post(path, function(request, response) {
 
-/************************************
-* HTTP put method for insert object *
-*************************************/
+  if (userIdPresent) {
+    request.body['userId'] = request.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
+  }
+
+  let params = {
+    TableName: tableName,
+    Item: {
+      ...request.body,
+      id: uuidv4(),
+
+    }
+  }
+  dynamodb.put(params, (err, data) => {
+    if(err) {
+      res.statusCode = 500;
+      res.json({error: err, url: req.url, body: req.body});
+    } else{
+      res.json({success: 'post call succeed!', url: req.url, data: data})
+    }
+  });
+});
 
 app.put(path, function(req, res) {
 
@@ -125,33 +145,6 @@ app.put(path, function(req, res) {
   });
 });
 
-/************************************
-* HTTP post method for insert object *
-*************************************/
-
-app.post(path, function(req, res) {
-
-  if (userIdPresent) {
-    req.body['userId'] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
-  }
-
-  let putItemParams = {
-    TableName: tableName,
-    Item: req.body
-  }
-  dynamodb.put(putItemParams, (err, data) => {
-    if(err) {
-      res.statusCode = 500;
-      res.json({error: err, url: req.url, body: req.body});
-    } else{
-      res.json({success: 'post call succeed!', url: req.url, data: data})
-    }
-  });
-});
-
-/**************************************
-* HTTP remove method to delete object *
-***************************************/
 
 app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
   var params = {};

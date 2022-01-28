@@ -1,1 +1,28 @@
-<p>post-list works!</p>
+<div class="row">
+  <div class="col-xs-12">
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="onNewPost()"
+      [disabled]="!isAllowed">New Post</button>
+  </div>
+</div>
+<hr>
+<div class="row">
+  <div class="col-xs-12">
+    <app-post-item
+      *ngFor="let postElement of posts; let i = index"
+      [post]="postElement"
+      [index]="i">
+    </app-post-item>
+  </div>
+</div>
+<hr>
+<div>
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="getAuthStatus()"
+  >Check Auth Status
+</button>
+</div>
