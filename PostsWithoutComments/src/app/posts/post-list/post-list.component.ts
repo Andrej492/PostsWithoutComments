@@ -14,6 +14,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   postsSub: Subscription;
   isAllowed = false;
   authSub: Subscription;
+  a = 5;
 
   constructor(
     private postService: PostService,
