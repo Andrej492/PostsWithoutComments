@@ -1,1 +1,36 @@
-<p>post-detail works!</p>
+<div class="row">
+  <div class="col-xs-12">
+    <button [disabled]="!isLoggedIn" class="btn btn-primary" style="cursor: pointer;" (click)="onEditPost()">Edit Post</button>
+    <button [disabled]="!isLoggedIn" class="btn btn-danger" style="cursor: pointer;" (click)="onDeletePost()">Delete Post</button>
+  </div>
+</div>
+<hr>
+<div class="row">
+  <div class="col-xs-12">
+    <img
+      [src]="post.postImagePath"
+      alt="{{ post.postTitle }}"
+      class="img-responsive"
+      style="max-height: 300px;">
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <h1>{{ post.postTitle }}</h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    {{ post.postContent }}
+  </div>
+</div>
+<hr>
+<div class="row">
+  <div class="col-xs-12">
+    <div *ngIf="true">
+      <button [disabled]="!isLoggedIn" class="btn btn-secondary" (click)="onAddComment()">Comment Post</button>
+      <!-- TU treba da dodju svi komentari prikazani a gore treba da se ispita da li ulogavan korisnik i ako jeste da li je to njegov post da moze da komentarise.. -->
+    </div>
+  </div>
+</div>
+

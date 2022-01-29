@@ -1,1 +1,61 @@
-<p>post-edit works!</p>
+<div class="row">
+  <div class="col-xs-12 col-sm-10 col-md-6 cold-sm-offset-1 col-md-offset-3 text-center">
+    <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-xs-12">
+          <button
+            type="submit"
+            class="btn btn-success"
+            [disabled]="!postForm.valid">Save Post</button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="onCancel()">Cancel</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="postTitle" class="control-label"> Title </label>
+            <input
+              type="text"
+              id="postTitle"
+              class="form-control text-center"
+              formControlName="postTitle">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="postContent" class="control-label"> Content </label>
+            <textarea
+              type="text"
+              id="postContent"
+              class="form-control"
+              rows="10"
+              formControlName="postContent"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="postImagePath" class="control-label"> Image URL </label>
+            <input
+              type="text"
+              id="postImagePath"
+              class="form-control"
+              formControlName="postImagePath"
+              #imagePath>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <img [src]="imagePath.value" class="img-responsive" style="max-height: 300px;">
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
