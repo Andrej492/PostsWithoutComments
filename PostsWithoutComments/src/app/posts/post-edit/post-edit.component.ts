@@ -32,6 +32,7 @@ export class PostEditComponent implements OnInit {
     if (this.editMode) {
       this.postService.updatePost(this.id, this.postForm.value);
     } else {
+      console.log(this.postForm.value);
       this.postService.addPost(this.postForm.value);
     }
     this.onCancel();

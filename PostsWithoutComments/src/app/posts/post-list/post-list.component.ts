@@ -14,7 +14,6 @@ export class PostListComponent implements OnInit, OnDestroy {
   postsSub: Subscription;
   isAllowed = false;
   authSub: Subscription;
-  a = 5;
 
   constructor(
     private postService: PostService,
@@ -29,7 +28,11 @@ export class PostListComponent implements OnInit, OnDestroy {
         this.posts = posts;
       }
     );
-    this.posts = this.postService.getPosts();
+    this.postService.getPosts().then(
+      (result: Post[]) => {
+        this.posts = (result);
+      }
+    );
     this.authSub = this.postService.isAuthenticated.subscribe((isAuth: boolean) => {
       this.isAllowed = isAuth;
     });
