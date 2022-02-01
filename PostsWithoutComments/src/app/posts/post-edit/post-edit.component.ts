@@ -28,7 +28,6 @@ export class PostEditComponent implements OnInit {
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
       this.editMode = params['id'] != null;
-      console.log(this.post);
       if(this.editMode) {
         this.postService.getPost(this.id)
         .then(post =>{
