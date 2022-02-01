@@ -40,8 +40,12 @@ export class PostEditComponent implements OnInit {
         .catch(err => {
           console.log(err);
         })
+        .finally(() => {
+          this.initForm();
+        });
+      } else {
+        this.initForm();
       }
-      this.initForm();
     });
   }
 
@@ -72,12 +76,13 @@ export class PostEditComponent implements OnInit {
     let Title = '';
     let ImagePath = '';
     let Content = '';
-    console.log(this.editMode);
+
     if (this.editMode) {
       Title = this.post.postTitle;
       ImagePath = this.post.postImagePath;
       Content = this.post.postContent;
     }
+
     this.postForm = new FormGroup({
       'postTitle': new FormControl(Title, Validators.required),
       'postImagePath': new FormControl(ImagePath, Validators.required),
