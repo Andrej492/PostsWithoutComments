@@ -30,8 +30,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       .then(post =>{
         this.post = post;
         this.postIdDatabase = this.post['id'];
-        console.log(this.post);
-        console.log(this.postIdDatabase);
       })
       .catch(err => {
         console.log(err);
@@ -47,7 +45,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   onDeletePost() {
-    console.log(this.id);
     this.postService.deletePost(this.postIdDatabase, this.id);
     this.router.navigate(['/posts']);
   }

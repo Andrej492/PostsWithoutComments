@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Post } from '../post.model';
 import { PostService } from '../post.service';
@@ -13,17 +13,35 @@ export class PostEditComponent implements OnInit {
   id: number;
   editMode = false;
   postForm: FormGroup;
+  post: Post = new Post( null, "", "", "", "" );
+  postIdDatabase: string;
+  postLoaded: Promise<boolean>
+  postTest: Post;
 
   constructor(
     private postService: PostService,
     private route: ActivatedRoute,
     private router: Router
-  ) { }
+  ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
       this.editMode = params['id'] != null;
+      console.log(this.post);
+      if(this.editMode) {
+        this.postService.getPost(this.id)
+        .then(post =>{
+          this.post = post;
+          this.postIdDatabase = this.post['id'];
+          console.log(this.post);
+          this.postLoaded = Promise.resolve(true);
+          return this.post;
+        })
+        .catch(err => {
+          console.log(err);
+        })
+      }
       this.initForm();
     });
   }
@@ -55,26 +73,16 @@ export class PostEditComponent implements OnInit {
     let Title = '';
     let ImagePath = '';
     let Content = '';
-
+    console.log(this.editMode);
     if (this.editMode) {
-      let post: Post;
-      this.postService.getPost(this.id).then(
-        (result: Post) => {
-          post = result;
-        }
-      )
-      .catch(err => {
-        console.log(err);
-      });
-      Title = post.postTitle;
-      ImagePath = post.postImagePath;
-      Content = post.postContent;
+      Title = this.post.postTitle;
+      ImagePath = this.post.postImagePath;
+      Content = this.post.postContent;
     }
     this.postForm = new FormGroup({
       'postTitle': new FormControl(Title, Validators.required),
       'postImagePath': new FormControl(ImagePath, Validators.required),
-      'postContent': new FormControl(Content, Validators.required)
+      'postContent': new FormControl(Content)
     });
   }
-
 }

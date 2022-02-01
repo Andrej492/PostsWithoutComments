@@ -5,9 +5,6 @@ import { Post } from "./post.model";
 
 @Injectable({providedIn: 'root'})
 export class PostService implements OnInit {
-  //dataLoadFailed = new Subject<boolean>();
-  //postsLoaded = new Subject<Post[]>();
-  //postData: Post;
   postsChanged = new Subject<Post[]>();
   dataEdited = new BehaviorSubject<boolean>(false);
   dataIsLoading = new BehaviorSubject<boolean>(false);
@@ -19,23 +16,12 @@ export class PostService implements OnInit {
   lastPostId = "";
   isAuthenticated = new BehaviorSubject<boolean>(false);
 
-  // private posts: Post[] = [
-  //   new Post(
-  //     'First Post',
-  //     'Post about tasty Schnitzel!',
-  //     'https://upload.wikimedia.org/wikipedia/commons/7/72/Schnitzel.JPG'
-  //   ),
-  //   new Post(
-  //     'Second Post',
-  //     'Post about big burger!',
-  //     'https://upload.wikimedia.org/wikipedia/commons/b/be/Burger_King_Angus_Bacon_%26_Cheese_Steak_Burger.jpg'
-  //   ),
-  //   new Post(
-  //     'Third Post',
-  //     'Post about big burger!',
-  //     'https://upload.wikimedia.org/wikipedia/commons/b/be/Burger_King_Angus_Bacon_%26_Cheese_Steak_Burger.jpg'
-  //   )
-  // ];
+
+
+  // 'https://upload.wikimedia.org/wikipedia/commons/7/72/Schnitzel.JPG'
+  // 'https://upload.wikimedia.org/wikipedia/commons/b/be/Burger_King_Angus_Bacon_%26_Cheese_Steak_Burger.jpg'
+  // 'https://upload.wikimedia.org/wikipedia/commons/b/be/Burger_King_Angus_Bacon_%26_Cheese_Steak_Burger.jpg'
+
   ngOnInit(): void {
     // if(this.posts.length > 0){
     //   this.getPosts();
@@ -43,7 +29,7 @@ export class PostService implements OnInit {
   }
   private posts: Post[] = [];
 
-  getPosts() {
+  getPosts(): Promise<Post[]> {
     return API.get('postsRestApi', '/posts', {})
     .then(result => {
       this.posts = JSON.parse(result.body);
@@ -55,14 +41,12 @@ export class PostService implements OnInit {
     });
   }
 
-  getPost(index: number) {
+  getPost(index: number): Promise<Post> {
     const postById = this.posts[index];
     const postEditDatabaseId = postById['id'];
-    console.log(postEditDatabaseId);
     return API.get('postsRestApi', `/posts/${postEditDatabaseId}`, {})
     .then(result => {
       this.post = JSON.parse(result.body);
-      console.log(this.post);
       return this.post;
     })
     .catch(err => {
@@ -112,7 +96,7 @@ export class PostService implements OnInit {
     API.del('postsRestApi', `/posts/${id}`, {})
     .then(result => {
       console.log(result);
-      this.posts.splice(index, 1);// to spet ne dela?1
+      this.posts.splice(index, 1);
       this.postsChanged.next(this.posts.slice());
     })
     .catch(err => {
