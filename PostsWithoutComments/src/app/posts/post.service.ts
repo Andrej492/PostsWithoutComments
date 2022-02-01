@@ -104,9 +104,24 @@ export class PostService implements OnInit {
     });
   }
 
-  updatePost(index: number, post: Post) {
-    this.posts[index] = post;
-    this.postsChanged.next(this.posts.slice());
+  updatePost(index: number, id: string, post: Post) {
+    API.put('postsRestApi', `/posts`, {
+      body: {
+        id: id,
+        postTitle: post.postTitle,
+        postContent: post.postContent,
+        postImagePath: post.postImagePath
+      }
+    })
+    .then((result) => {
+      const post: Post = JSON.parse(result.body);
+      this.post[index] = post;
+      this.postsChanged.next(this.posts.slice());
+      console.log(result);
+    })
+    .catch(err => {
+      console.log(err);
+    });
   }
 
 

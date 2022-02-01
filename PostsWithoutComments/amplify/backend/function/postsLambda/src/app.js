@@ -112,9 +112,6 @@ app.post("/posts", function(request, response) {
 });
 
 app.put("/posts", function(request, response) {
-  if (userIdPresent) {
-    request.body['userId'] = request.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
-  }
   let params = {
     TableName: tableName,
     Key : {
