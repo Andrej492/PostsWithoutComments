@@ -105,7 +105,7 @@ export class PostService implements OnInit {
   }
 
   updatePost(index: number, id: string, post: Post) {
-    API.put('postsRestApi', `/posts`, {
+    API.put('postsRestApi', '/posts', {
       body: {
         id: id,
         postTitle: post.postTitle,
@@ -114,9 +114,9 @@ export class PostService implements OnInit {
       }
     })
     .then((result) => {
-      const post: Post = JSON.parse(result.body);
-      this.post[index] = post;
-      this.postsChanged.next(this.posts.slice());
+      //const post: Post = JSON.parse(result.body);
+      //this.post[index] = post;
+      //this.postsChanged.next(this.posts.slice());
       console.log(result);
     })
     .catch(err => {

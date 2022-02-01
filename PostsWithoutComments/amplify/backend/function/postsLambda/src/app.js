@@ -114,23 +114,26 @@ app.post("/posts", function(request, response) {
 app.put("/posts", function(request, response) {
   let params = {
     TableName: tableName,
-    Key : {
-      id: request.body.id
+    Item : {
+      id: request.body.id,
+      postTitle: request.body.postTitle,
+      postContent: request.body.postContent,
+      postImagePath: request.body.postImagePath,
+      postOwnerId: getUserId(request)
     }
   }
   dynamodb.put(params, (err, result) => {
     if(err) {
       response.json({
         statusCode: 500,
-        error: err,
+        error: err.message,
         url: request.url
       });
     } else{
       response.json({
         success: 'put call succeed!',
-        statusCode: 200,
         url: request.url,
-        body: JSON.stringify(result.Attributes)
+        body: JSON.stringify(params.Item)
       })
     }
   });
