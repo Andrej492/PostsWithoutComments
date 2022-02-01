@@ -19,7 +19,6 @@ export class PostsComponent implements OnInit {
       this.postService.isAuthenticated.next(true);
     })
     .catch(err => {
-      console.log(err);
       this.postService.isAuthenticated.next(false);
     });
   }

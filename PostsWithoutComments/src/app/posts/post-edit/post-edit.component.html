@@ -16,12 +16,15 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="form-group">
-            <label for="postTitle" class="control-label"> Title </label>
+            <label
+              for="postTitle"
+              class="control-label"> Title </label>
             <input
               type="text"
               id="postTitle"
               class="form-control text-center"
-              formControlName="postTitle">
+              formControlName="postTitle"
+              placeholder="Enter Title:">
           </div>
         </div>
       </div>
@@ -34,7 +37,8 @@
               id="postContent"
               class="form-control"
               rows="10"
-              formControlName="postContent"></textarea>
+              formControlName="postContent"
+              placeholder="Enter Content:"></textarea>
           </div>
         </div>
       </div>
@@ -47,6 +51,7 @@
               id="postImagePath"
               class="form-control"
               formControlName="postImagePath"
+              placeholder="Enter Image URL:"
               #imagePath>
           </div>
         </div>

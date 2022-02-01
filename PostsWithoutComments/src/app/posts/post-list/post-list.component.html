@@ -8,7 +8,7 @@
   </div>
 </div>
 <hr>
-<div class="row">
+<div class="row" *ngIf="posts.length > 0">
   <div class="col-xs-12">
     <app-post-item
       *ngFor="let postElement of posts; let i = index"
@@ -16,6 +16,9 @@
       [index]="i">
     </app-post-item>
   </div>
+</div>
+<div class="row" *ngIf="posts.length <= 0">
+  <h3>No posts added yet!</h3>
 </div>
 <hr>
 <div>

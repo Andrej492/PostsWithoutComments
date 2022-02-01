@@ -10,8 +10,10 @@ import { PostService } from '../post.service';
   styleUrls: ['./post-detail.component.css']
 })
 export class PostDetailComponent implements OnInit, OnDestroy {
-  post: Post;
+  post: Post = new Post( null, "", "", "", "");
+  // Important to set new Post, since it first renders the html file, then not to be empty..
   id: number;
+  postIdDatabase: string;
   isLoggedIn = false;
   subscriptionAuth: Subscription;
 
@@ -24,9 +26,17 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
-      this.post = this.postService.getPost(this.id);
+      this.postService.getPost(this.id)
+      .then(post =>{
+        this.post = post;
+        this.postIdDatabase = this.post['id'];
+        console.log(this.post);
+        console.log(this.postIdDatabase);
+      })
+      .catch(err => {
+        console.log(err);
+      })
     });
-
     this.subscriptionAuth = this.postService.isAuthenticated.subscribe((isAuth: boolean) => {
       this.isLoggedIn = isAuth;
     });
@@ -34,14 +44,13 @@ export class PostDetailComponent implements OnInit, OnDestroy {
 
   onEditPost() {
     this.router.navigate(['edit'], {relativeTo: this.route});
-    //this.router.navigate(['../', this.id, 'edit], {relativeTo: this.route});
   }
 
   onDeletePost() {
-    this.postService.deletePost(this.id);
+    console.log(this.id);
+    this.postService.deletePost(this.postIdDatabase, this.id);
     this.router.navigate(['/posts']);
   }
-
   onAddComment() {}
 
   ngOnDestroy(): void {

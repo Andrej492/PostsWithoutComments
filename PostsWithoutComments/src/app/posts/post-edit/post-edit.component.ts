@@ -57,7 +57,15 @@ export class PostEditComponent implements OnInit {
     let Content = '';
 
     if (this.editMode) {
-      const post: Post = this.postService.getPost(this.id);
+      let post: Post;
+      this.postService.getPost(this.id).then(
+        (result: Post) => {
+          post = result;
+        }
+      )
+      .catch(err => {
+        console.log(err);
+      });
       Title = post.postTitle;
       ImagePath = post.postImagePath;
       Content = post.postContent;
@@ -65,7 +73,7 @@ export class PostEditComponent implements OnInit {
     this.postForm = new FormGroup({
       'postTitle': new FormControl(Title, Validators.required),
       'postImagePath': new FormControl(ImagePath, Validators.required),
-      'postContent': new FormControl(Content)
+      'postContent': new FormControl(Content, Validators.required)
     });
   }
 

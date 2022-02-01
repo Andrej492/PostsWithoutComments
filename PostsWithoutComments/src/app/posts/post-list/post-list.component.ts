@@ -22,15 +22,15 @@ export class PostListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.postService.getPosts().then(
+      (result: Post[]) => {
+        this.posts = result;
+      }
+    );
     this.postsSub = this.postService.postsChanged
     .subscribe(
       (posts: Post[]) => {
         this.posts = posts;
-      }
-    );
-    this.postService.getPosts().then(
-      (result: Post[]) => {
-        this.posts = (result);
       }
     );
     this.authSub = this.postService.isAuthenticated.subscribe((isAuth: boolean) => {

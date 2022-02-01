@@ -1,20 +1,21 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnInit } from "@angular/core";
 import { API } from "aws-amplify";
 import { BehaviorSubject, Subject } from "rxjs";
 import { Post } from "./post.model";
 
 @Injectable({providedIn: 'root'})
-export class PostService {
+export class PostService implements OnInit {
   //dataLoadFailed = new Subject<boolean>();
   //postsLoaded = new Subject<Post[]>();
   //postData: Post;
   postsChanged = new Subject<Post[]>();
-
   dataEdited = new BehaviorSubject<boolean>(false);
   dataIsLoading = new BehaviorSubject<boolean>(false);
   dataLoaded = new Subject<Post[]>();
   dataLoadFailed = new Subject<boolean>();
   userData: Post;
+  post: Post;
+  postGet: Post;
   lastPostId = "";
   isAuthenticated = new BehaviorSubject<boolean>(false);
 
@@ -35,48 +36,42 @@ export class PostService {
   //     'https://upload.wikimedia.org/wikipedia/commons/b/be/Burger_King_Angus_Bacon_%26_Cheese_Steak_Burger.jpg'
   //   )
   // ];
-
+  ngOnInit(): void {
+    // if(this.posts.length > 0){
+    //   this.getPosts();
+    // }
+  }
   private posts: Post[] = [];
 
   getPosts() {
-    // Call Api
     return API.get('postsRestApi', '/posts', {})
     .then(result => {
-      console.log(result);
-      let str = (result.body);
-      console.log(str);
-      //this.posts = <Post[]>JSON.parse(result);
-      const obj = JSON.parse(result.body);
-      console.log(obj);
-      for(let i = 0; i < obj.length; i++) {
-        this.userData.postContent = (obj.postContent);
-        this.userData.postTitle = (obj.postTitle);
-        this.userData.postImagePath = (obj.postImagePath);
-        console.log(this.userData);
-      }
-      // I am returning whole response, such as generatedes ids and postOwnerId
-      // maybe I should change the Post model? I think no,
-      // I should either filter here or there in responses
-
-      console.log(this.posts);
+      this.posts = JSON.parse(result.body);
       return this.posts;
     })
     .catch(err => {
       console.log(err);
       return err;
     });
-    //
-    //return this.posts.slice();
   }
 
   getPost(index: number) {
-    // Call APi to get single element
-
-    return this.posts[index];
+    const postById = this.posts[index];
+    const postEditDatabaseId = postById['id'];
+    console.log(postEditDatabaseId);
+    return API.get('postsRestApi', `/posts/${postEditDatabaseId}`, {})
+    .then(result => {
+      this.post = JSON.parse(result.body);
+      console.log(this.post);
+      return this.post;
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    })
   }
 
   addPost(post: Post) {
-    // Call API to add Post
     this.dataLoadFailed.next(false);
     this.dataIsLoading.next(true);
     this.dataEdited.next(false);
@@ -94,10 +89,12 @@ export class PostService {
           postImagePath: postImagePath
         }
       }
-      )
+    )
     .then((result) => {
-      this.lastPostId = JSON.parse(result.body).id;
-      console.log(this.lastPostId);
+      // this.lastPostId = JSON.parse(result.body).id;
+      const post: Post = JSON.parse(result.body);
+      this.posts.push(post);
+      this.postsChanged.next(this.posts.slice());
       console.log(result);
     })
     .catch(err => {
@@ -106,14 +103,21 @@ export class PostService {
       this.dataEdited.next(false);
       console.log('Error in posting: ' + err);
     });
-    // this.posts.push(post);
-    // this.postsChanged.next(this.posts.slice());
   }
 
-  deletePost(index: number) {
-    // Call Api.del ...
-    this.posts.splice(index, 1);
-    this.postsChanged.next(this.posts.slice());
+  deletePost(id: string, index: number) {
+    console.log("Deleting Post!");
+    console.log(id);
+    console.log(index);
+    API.del('postsRestApi', `/posts/${id}`, {})
+    .then(result => {
+      console.log(result);
+      this.posts.splice(index, 1);// to spet ne dela?1
+      this.postsChanged.next(this.posts.slice());
+    })
+    .catch(err => {
+      console.log(err);
+    });
   }
 
   updatePost(index: number, post: Post) {

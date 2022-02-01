@@ -34,7 +34,6 @@ app.use(function (request, response, next) {
   next()
 });
 
-
 app.get("/posts", function(request, response) {
   let params = {
     TableName: tableName,
@@ -56,7 +55,6 @@ app.get("/posts", function(request, response) {
   });
 });
 
-
 app.get("/posts/:id", function(request, response) {
   let params = {
     TableName: tableName,
@@ -68,7 +66,7 @@ app.get("/posts/:id", function(request, response) {
     if(err) {
       response.json({
         statusCode: 500,
-        error: 'Could not load items: ' + err.message
+        error: 'Could not load item: ' + err.message
       });
     } else {
       if (result.Item) {
@@ -85,16 +83,15 @@ app.get("/posts/:id", function(request, response) {
 });
 
 app.post("/posts", function(request, response) {
-  const username = request.apiGateway.event.requestContext.identity.usernameCognito;
+  //const username = request.apiGateway.event.requestContext.identity.usernameCognito;
   let params = {
     TableName: tableName,
     Item: {
       id: uuidv4(),
-      postTitle: (request.body).postTitle,
+      postTitle: request.body.postTitle,
       postContent: request.body.postContent,
       postImagePath: request.body.postImagePath,
-      postOwnerId: getUserId(request),
-      postOwnerUsername: username
+      postOwnerId: getUserId(request)
     }
   }
   dynamodb.put(params, (err, result) => {
@@ -118,13 +115,11 @@ app.put("/posts", function(request, response) {
   if (userIdPresent) {
     request.body['userId'] = request.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
   }
-
   let params = {
     TableName: tableName,
     Key : {
       id: request.body.id
     }
-
   }
   dynamodb.put(params, (err, result) => {
     if(err) {
@@ -159,7 +154,8 @@ app.delete("/posts/:id", function(request, response) {
         url: request.url
       });
     } else {
-      res.json({
+      response.json({
+        success: 'delete call succeed!',
         statusCode: 200,
         url: request.url,
         body: JSON.stringify(result)
