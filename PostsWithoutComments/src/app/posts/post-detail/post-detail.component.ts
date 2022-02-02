@@ -10,12 +10,15 @@ import { PostService } from '../post.service';
   styleUrls: ['./post-detail.component.css']
 })
 export class PostDetailComponent implements OnInit, OnDestroy {
-  post: Post = new Post( null, "", "", "", "");
   // Important to set new Post, since it first renders the html file, then not to be empty..
+  post: Post = new Post( null, "", "", "", "");
   id: number;
-  postIdDatabase: string;
+  postId: string;
   isLoggedIn = false;
   subscriptionAuth: Subscription;
+  postOwnerId: string;
+  isAuthorOfPost: boolean = false;
+
 
   constructor(
     private postService: PostService,
@@ -29,10 +32,18 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       this.postService.getPost(this.id)
       .then(post =>{
         this.post = post;
-        this.postIdDatabase = this.post['id'];
+        this.postId = this.post['id'];
+        this.postOwnerId = this.post['postOwnerId'];
       })
       .catch(err => {
         console.log(err);
+      })
+      .finally(() => {
+        let currentCognitoUserId: string;
+        currentCognitoUserId = this.postService.getCurrentAuthenticatedUser();
+        if(currentCognitoUserId === this.postOwnerId) {
+          this.isAuthorOfPost = true;
+        }
       })
     });
     this.subscriptionAuth = this.postService.isAuthenticated.subscribe((isAuth: boolean) => {
@@ -45,7 +56,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   onDeletePost() {
-    this.postService.deletePost(this.postIdDatabase, this.id);
+    this.postService.deletePost(this.postId, this.id);
     this.router.navigate(['/posts']);
   }
   onAddComment() {}

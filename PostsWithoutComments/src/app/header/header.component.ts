@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Auth } from 'aws-amplify';
+import { Subject, Subscription } from 'rxjs';
 import { PostService } from '../posts/post.service';
 
 @Component({
@@ -15,9 +16,10 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.authSubscription = this.postService.isAuthenticated
-      .subscribe((authStatus: boolean) => {
-        this.isAuthenticated = authStatus;
-      });
+    .subscribe((authStatus: boolean) => {
+      this.isAuthenticated = authStatus;
+    });
+    this.postService.getCurrentAuthenticatedUser();
   }
 
   ngOnDestroy(): void {

@@ -1,10 +1,11 @@
 import { Injectable, OnInit } from "@angular/core";
-import { API } from "aws-amplify";
+import { API, Auth } from "aws-amplify";
 import { BehaviorSubject, Subject } from "rxjs";
 import { Post } from "./post.model";
 
 @Injectable({providedIn: 'root'})
 export class PostService implements OnInit {
+  private posts: Post[] = [];
   postsChanged = new Subject<Post[]>();
   dataEdited = new BehaviorSubject<boolean>(false);
   dataIsLoading = new BehaviorSubject<boolean>(false);
@@ -13,21 +14,29 @@ export class PostService implements OnInit {
   userData: Post;
   post: Post;
   postGet: Post;
-  lastPostId = "";
   isAuthenticated = new BehaviorSubject<boolean>(false);
-
-
-
-  // 'https://upload.wikimedia.org/wikipedia/commons/7/72/Schnitzel.JPG'
-  // 'https://upload.wikimedia.org/wikipedia/commons/b/be/Burger_King_Angus_Bacon_%26_Cheese_Steak_Burger.jpg'
-  // 'https://upload.wikimedia.org/wikipedia/commons/b/be/Burger_King_Angus_Bacon_%26_Cheese_Steak_Burger.jpg'
+  cognitoUserId: string = "";
 
   ngOnInit(): void {
-    // if(this.posts.length > 0){
-    //   this.getPosts();
-    // }
+
   }
-  private posts: Post[] = [];
+
+  getCurrentAuthenticatedUser(): string {
+    Auth.currentAuthenticatedUser({
+      bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+    })
+    .then(user => {
+      this.cognitoUserId = user.attributes.sub;
+    })
+    .catch(err => console.log(err));
+    return this.cognitoUserId;
+  }
+
+  getCurrentUserId(userId: string | undefined): string {
+    let cognitoId: string | undefined;
+
+    return cognitoId;
+  }
 
   getPosts(): Promise<Post[]> {
     return API.get('postsRestApi', '/posts', {})
@@ -75,11 +84,9 @@ export class PostService implements OnInit {
       }
     )
     .then((result) => {
-      // this.lastPostId = JSON.parse(result.body).id;
       const post: Post = JSON.parse(result.body);
       this.posts.push(post);
       this.postsChanged.next(this.posts.slice());
-      console.log(result);
     })
     .catch(err => {
       this.dataIsLoading.next(false);
@@ -92,7 +99,6 @@ export class PostService implements OnInit {
   deletePost(id: string, index: number) {
     API.del('postsRestApi', `/posts/${id}`, {})
     .then(result => {
-      console.log(result);
       this.posts.splice(index, 1);
       this.postsChanged.next(this.posts.slice());
     })

@@ -38,10 +38,6 @@ export class PostListComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAuthStatus() {
-    console.log(this.isAllowed);
-  }
-
   onNewPost() {
     this.router.navigate(['new'], {relativeTo: this.route});
   }

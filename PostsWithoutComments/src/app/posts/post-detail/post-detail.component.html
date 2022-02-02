@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-xs-12">
-    <button [disabled]="!isLoggedIn" class="btn btn-primary" style="cursor: pointer;" (click)="onEditPost()">Edit Post</button>
-    <button [disabled]="!isLoggedIn" class="btn btn-danger" style="cursor: pointer;" (click)="onDeletePost()">Delete Post</button>
+    <button [disabled]="!isLoggedIn || !isAuthorOfPost" class="btn btn-primary" style="cursor: pointer;" (click)="onEditPost()">Edit Post</button>
+    <button [disabled]="!isLoggedIn || !isAuthorOfPost" class="btn btn-danger" style="cursor: pointer;" (click)="onDeletePost()">Delete Post</button>
   </div>
 </div>
 <hr>
