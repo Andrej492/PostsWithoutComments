@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Auth } from 'aws-amplify';
 import { Subscription } from 'rxjs';
 import { Post } from '../post.model';
 import { PostService } from '../post.service';
@@ -17,7 +18,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   subscriptionAuth: Subscription;
   postOwnerId: string;
-  isAuthorOfPost: boolean = false;
+  isAuthorOfPost: boolean;
 
 
   constructor(
@@ -34,16 +35,30 @@ export class PostDetailComponent implements OnInit, OnDestroy {
         this.post = post;
         this.postId = this.post['id'];
         this.postOwnerId = this.post['postOwnerId'];
+        console.log(this.postOwnerId);
       })
       .catch(err => {
         console.log(err);
       })
       .finally(() => {
         let currentCognitoUserId: string;
-        currentCognitoUserId = this.postService.getCurrentAuthenticatedUser();
-        if(currentCognitoUserId === this.postOwnerId) {
-          this.isAuthorOfPost = true;
-        }
+        Auth.currentAuthenticatedUser({
+          bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+        })
+        .then(user => {
+          console.log(user);
+          currentCognitoUserId = user.attributes.sub;
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
+          if(currentCognitoUserId === this.postOwnerId) {
+            this.isAuthorOfPost = true;
+          } else {
+            this.isAuthorOfPost = false;
+          }
+        });
       })
     });
     this.subscriptionAuth = this.postService.isAuthenticated.subscribe((isAuth: boolean) => {

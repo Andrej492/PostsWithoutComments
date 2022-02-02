@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CognitoUserInterface, AuthState, onAuthUIStateChange} from '@aws-amplify/ui-components';
-import { PostService } from '../posts/post.service';
 
 @Component({
   selector: 'app-auth',
@@ -10,10 +9,9 @@ import { PostService } from '../posts/post.service';
 export class AuthComponent implements OnInit, OnDestroy {
   user: CognitoUserInterface | undefined;
   authState: AuthState;
-
   constructor(
-    private ref: ChangeDetectorRef,
-    private postService: PostService) {}
+    private ref: ChangeDetectorRef
+    ) {}
 
   ngOnInit(): void {
     onAuthUIStateChange((resAuthState, resAuthData) => {

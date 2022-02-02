@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from "@angular/core";
-import { API, Auth } from "aws-amplify";
+import { API, Auth, auth0SignInButton } from "aws-amplify";
 import { BehaviorSubject, Subject } from "rxjs";
 import { Post } from "./post.model";
 
@@ -15,28 +15,8 @@ export class PostService implements OnInit {
   post: Post;
   postGet: Post;
   isAuthenticated = new BehaviorSubject<boolean>(false);
-  cognitoUserId: string = "";
 
-  ngOnInit(): void {
-
-  }
-
-  getCurrentAuthenticatedUser(): string {
-    Auth.currentAuthenticatedUser({
-      bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
-    })
-    .then(user => {
-      this.cognitoUserId = user.attributes.sub;
-    })
-    .catch(err => console.log(err));
-    return this.cognitoUserId;
-  }
-
-  getCurrentUserId(userId: string | undefined): string {
-    let cognitoId: string | undefined;
-
-    return cognitoId;
-  }
+  ngOnInit(): void {}
 
   getPosts(): Promise<Post[]> {
     return API.get('postsRestApi', '/posts', {})

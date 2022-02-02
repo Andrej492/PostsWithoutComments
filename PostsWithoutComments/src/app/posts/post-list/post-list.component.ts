@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CognitoUser } from '@aws-amplify/auth';
+import { Auth } from 'aws-amplify';
 import { Subscription } from 'rxjs';
 import { Post } from '../post.model';
 import { PostService } from '../post.service';
@@ -36,7 +38,39 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.authSub = this.postService.isAuthenticated.subscribe((isAuth: boolean) => {
       this.isAllowed = isAuth;
     });
+    if(this.isAllowed) {
+      Auth.currentSession()
+      .then(session => {
+        let str: string = session.getIdToken().getJwtToken();
+        console.log(str);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    }
+    if(this.isAllowed) {
+      Auth.currentSession()
+      .then(session => {
+        let str: string = session.getAccessToken().getJwtToken();
+        console.log(str);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    }
   }
+
+  // getcurrentauthuser(): Promise<CognitoUser> {
+  //   return Auth.currentAuthenticatedUser();
+  // }
+
+  // logout() {
+  //   this.getcurrentauthuser().then(
+  //     (user: CognitoUser) => {
+  //       user.signOut();
+  //     }
+  //   )
+  // }
 
   onNewPost() {
     this.router.navigate(['new'], {relativeTo: this.route});

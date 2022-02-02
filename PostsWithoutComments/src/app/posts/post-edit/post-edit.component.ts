@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Post } from '../post.model';
 import { PostService } from '../post.service';
@@ -62,10 +62,6 @@ export class PostEditComponent implements OnInit {
   onClear() {
     this.postForm.reset();
     this.editMode = false;
-  }
-
-  ngOnDestroy(): void {
-      //this.editPostSubscription.unsubscribe();
   }
 
   private initForm() {
