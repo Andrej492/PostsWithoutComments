@@ -41,10 +41,6 @@ export class PostService implements OnInit {
     });
   }
 
-  getPostsLocally() {
-    return this.posts.slice();
-  }
-
   getPost(index: number): Promise<Post> {
     const postById = this.posts[index];
     const postEditDatabaseId = postById['id'];
@@ -115,12 +111,9 @@ export class PostService implements OnInit {
       }
     })
     .then((result) => {
-      console.log(result);
       const post: Post = JSON.parse(result.body);
       this.posts[index] = post;
-      console.log(post);
       this.postsChanged.next(this.posts.slice());
-      console.log(result);
     })
     .catch(err => {
       console.log(err);
