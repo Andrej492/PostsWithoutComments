@@ -42,7 +42,7 @@ export class PostListComponent implements OnInit, OnDestroy {
       Auth.currentSession()
       .then(session => {
         let str: string = session.getIdToken().getJwtToken();
-        console.log(str);
+        console.log('IdToken is:' + str);
       })
       .catch(err => {
         console.log(err);
