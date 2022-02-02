@@ -90,9 +90,6 @@ export class PostService implements OnInit {
   }
 
   deletePost(id: string, index: number) {
-    console.log("Deleting Post!");
-    console.log(id);
-    console.log(index);
     API.del('postsRestApi', `/posts/${id}`, {})
     .then(result => {
       console.log(result);
@@ -114,9 +111,10 @@ export class PostService implements OnInit {
       }
     })
     .then((result) => {
-      //const post: Post = JSON.parse(result.body);
-      //this.post[index] = post;
-      //this.postsChanged.next(this.posts.slice());
+      const post: Post = JSON.parse(result.body);
+      this.posts[index] = post;
+      console.log(this.post);
+      this.postsChanged.next(this.posts.slice());
       console.log(result);
     })
     .catch(err => {

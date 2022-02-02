@@ -15,7 +15,6 @@ export class PostEditComponent implements OnInit {
   postForm: FormGroup;
   post: Post = new Post( null, "", "", "", "" );
   postIdDatabase: string;
-  postLoaded: Promise<boolean>
   postTest: Post;
 
   constructor(
@@ -33,8 +32,6 @@ export class PostEditComponent implements OnInit {
         .then(post =>{
           this.post = post;
           this.postIdDatabase = this.post['id'];
-          console.log(this.post);
-          this.postLoaded = Promise.resolve(true);
           return this.post;
         })
         .catch(err => {
