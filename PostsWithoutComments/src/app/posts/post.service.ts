@@ -22,6 +22,7 @@ export class PostService implements OnInit {
     return API.get('postsRestApi', '/posts', {})
     .then(result => {
       this.posts = JSON.parse(result.body);
+      this.postsChanged.next(this.posts.slice());
       return this.posts;
     })
     .catch(err => {
@@ -66,13 +67,15 @@ export class PostService implements OnInit {
     .then((result) => {
       const post: Post = JSON.parse(result.body);
       this.posts.push(post);
-      this.postsChanged.next(this.posts.slice());
     })
     .catch(err => {
       this.dataIsLoading.next(false);
       this.dataLoadFailed.next(true);
       this.dataEdited.next(false);
       console.log('Error in posting: ' + err);
+    })
+    .finally(() => {
+      this.postsChanged.next(this.posts.slice());
     });
   }
 

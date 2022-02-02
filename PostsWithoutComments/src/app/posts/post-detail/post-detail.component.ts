@@ -20,7 +20,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   postOwnerId: string;
   isAuthorOfPost: boolean;
 
-
   constructor(
     private postService: PostService,
     private route: ActivatedRoute,
@@ -35,7 +34,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
         this.post = post;
         this.postId = this.post['id'];
         this.postOwnerId = this.post['postOwnerId'];
-        console.log(this.postOwnerId);
       })
       .catch(err => {
         console.log(err);
@@ -43,10 +41,9 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       .finally(() => {
         let currentCognitoUserId: string;
         Auth.currentAuthenticatedUser({
-          bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+          bypassCache: false
         })
         .then(user => {
-          console.log(user);
           currentCognitoUserId = user.attributes.sub;
         })
         .catch(err => {
