@@ -5,6 +5,7 @@ import { PostsComponent } from './posts/posts.component';
 import { PostEditComponent } from './posts/post-edit/post-edit.component';
 import { PostDetailComponent } from './posts/post-detail/post-detail.component';
 import { PostStartComponent } from './posts/post-start/post-start.component';
+import { PostsResolverService } from './posts/posts-resolver.service';
 
 const routes: Routes = [
   { path: '', redirectTo: '/posts', pathMatch: 'full'},
@@ -13,8 +14,8 @@ const routes: Routes = [
     children: [
       { path: '', component: PostStartComponent },
       { path: 'new', component: PostEditComponent },
-      { path: ':id', component: PostDetailComponent},
-      { path: ':id/edit', component: PostEditComponent}
+      { path: ':id', component: PostDetailComponent, resolve: [PostsResolverService]},
+      { path: ':id/edit', component: PostEditComponent, resolve: [PostsResolverService]}
     ]
   }
 ];
