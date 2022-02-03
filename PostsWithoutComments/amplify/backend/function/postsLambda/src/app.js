@@ -27,11 +27,14 @@ var app = express()
 app.use(bodyParser.json())
 app.use(awsServerlessExpressMiddleware.eventContext())
 
-// Enable CORS for all methods
-app.use(function (request, response, next) {
-  response.header("Access-Control-Allow-Origin", "*")
-  response.header("Access-Control-Allow-Headers", "Origin", "X-Requested-With", "Content-Type: application/json", "Accept")
-  next()
+
+app.use(function ( request, response, next) {
+  response.header("Access-Control-Allow-Origin", "*");
+  response.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type",
+    "Accept, Authorization");
+  next();
 });
 
 app.get("/posts", function(request, response) {

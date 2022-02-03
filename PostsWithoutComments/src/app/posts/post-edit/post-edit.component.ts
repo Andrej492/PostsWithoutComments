@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Post } from '../post.model';
 import { PostService } from '../post.service';
@@ -13,9 +13,10 @@ export class PostEditComponent implements OnInit {
   id: number;
   editMode = false;
   postForm: FormGroup;
-  post: Post = new Post( null, "", "", "", "" );
+  post: Post = new Post( "", "", "", "", "" );
   postIdDatabase: string;
   postTest: Post;
+  isLoading: boolean;
 
   constructor(
     private postService: PostService,
@@ -24,13 +25,35 @@ export class PostEditComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.postForm = new FormGroup({
+      'postTitle': new FormControl(
+        null,
+        {validators: [Validators.required, Validators.minLength(3)]}
+        ),
+      'postImagePath': new FormControl(
+        null,
+        {validators: [Validators.required]}
+        ),
+      'postContent': new FormControl(
+        null,
+        {validators: [Validators.required]}
+        )
+    });
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
       this.editMode = params['id'] != null;
       if(this.editMode) {
+        this.isLoading = true;
         this.postService.getPost(this.id)
-        .then(post =>{
-          this.post = post;
+        .then(postData =>{
+          this.isLoading = false;
+          this.post = {
+            id: postData.id,
+            postTitle: postData.postTitle,
+            postContent: postData.postContent,
+            postImagePath: postData.postImagePath,
+            postOwnerId: postData.postOwnerId
+          };
           this.postIdDatabase = this.post['id'];
           return this.post;
         })
@@ -38,10 +61,10 @@ export class PostEditComponent implements OnInit {
           console.log(err);
         })
         .finally(() => {
-          this.initForm();
+          this.setForm();
         });
       } else {
-        this.initForm();
+        this.setForm();
       }
     });
   }
@@ -64,10 +87,10 @@ export class PostEditComponent implements OnInit {
     this.editMode = false;
   }
 
-  private initForm() {
-    let Title = '';
-    let ImagePath = '';
-    let Content = '';
+  private setForm() {
+    let Title = "";
+    let ImagePath = "";
+    let Content = "";
 
     if (this.editMode) {
       Title = this.post.postTitle;
@@ -75,10 +98,10 @@ export class PostEditComponent implements OnInit {
       Content = this.post.postContent;
     }
 
-    this.postForm = new FormGroup({
-      'postTitle': new FormControl(Title, Validators.required),
-      'postImagePath': new FormControl(ImagePath, Validators.required),
-      'postContent': new FormControl(Content)
+    this.postForm.setValue({
+       postTitle: this.post.postTitle,
+       postContent: this.post.postContent,
+       postImagePath: this.post.postImagePath
     });
   }
 }
