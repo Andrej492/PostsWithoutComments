@@ -19,6 +19,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   subscriptionAuth: Subscription;
   postOwnerId: string;
   isAuthorOfPost: boolean;
+  isLoading = true;
 
   constructor(
     private postService: PostService,
@@ -34,6 +35,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
         this.post = post;
         this.postId = this.post['id'];
         this.postOwnerId = this.post['postOwnerId'];
+        this.isLoading = false;
       })
       .catch(err => {
         console.log(err);
