@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Post } from '../post.model';
 import { PostService } from '../post.service';
@@ -91,13 +91,13 @@ export class PostEditComponent implements OnInit {
     let Content = "";
     if (this.editMode) {
       Title = this.post.postTitle;
-      ImagePath = this.post.postImagePath;
       Content = this.post.postContent;
+      ImagePath = this.post.postImagePath;
     }
     this.postForm.setValue({
-       postTitle: this.post.postTitle,
-       postContent: this.post.postContent,
-       postImagePath: this.post.postImagePath
+       postTitle: Title,
+       postContent: Content,
+       postImagePath: ImagePath
     });
   }
 }

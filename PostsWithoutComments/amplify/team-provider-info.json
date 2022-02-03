@@ -21,6 +21,12 @@
           "deploymentBucketName": "amplify-postswithoutcomments-dev-151952-deployment",
           "s3Key": "amplify-builds/postsLambda-52396d32527767674c6f-build.zip"
         }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d33doc09q64gz9",
+          "type": "manual"
+        }
       }
     }
   }

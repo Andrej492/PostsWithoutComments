@@ -19,7 +19,11 @@ export class PostService implements OnInit {
   ngOnInit(): void {}
 
   getPosts(): Promise<Post[]> {
-    return API.get('postsRestApi', '/posts', {})
+    return API.get(
+      'postsRestApi',
+      '/posts',
+      {}
+      )
     .then(result => {
       this.posts = JSON.parse(result.body);
       this.postsChanged.next(this.posts.slice());
@@ -34,7 +38,11 @@ export class PostService implements OnInit {
   getPost(index: number): Promise<Post> {
     const postById = this.posts[index];
     const postEditDatabaseId = postById['id'];
-    return API.get('postsRestApi', `/posts/${postEditDatabaseId}`, {})
+    return API.get(
+      'postsRestApi',
+      `/posts/${postEditDatabaseId}`,
+      {}
+      )
     .then(result => {
       this.post = JSON.parse(result.body);
       return this.post;

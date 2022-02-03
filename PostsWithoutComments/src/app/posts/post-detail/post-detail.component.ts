@@ -11,8 +11,7 @@ import { PostService } from '../post.service';
   styleUrls: ['./post-detail.component.css']
 })
 export class PostDetailComponent implements OnInit, OnDestroy {
-  // Important to set new Post, since it first renders the html file, then not to be empty..
-  post: Post = new Post( null, "", "", "", "");
+  post: Post;
   id: number;
   postId: string;
   isLoggedIn = false;
