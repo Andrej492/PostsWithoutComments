@@ -13,9 +13,8 @@ export class PostEditComponent implements OnInit {
   id: number;
   editMode = false;
   postForm: FormGroup;
-  post: Post = new Post( "", "", "", "", "" );
+  post: Post;
   postIdDatabase: string;
-  postTest: Post;
   isLoading: boolean;
 
   constructor(
@@ -55,7 +54,6 @@ export class PostEditComponent implements OnInit {
             postOwnerId: postData.postOwnerId
           };
           this.postIdDatabase = this.post['id'];
-          return this.post;
         })
         .catch(err => {
           console.log(err);
@@ -91,13 +89,11 @@ export class PostEditComponent implements OnInit {
     let Title = "";
     let ImagePath = "";
     let Content = "";
-
     if (this.editMode) {
       Title = this.post.postTitle;
       ImagePath = this.post.postImagePath;
       Content = this.post.postContent;
     }
-
     this.postForm.setValue({
        postTitle: this.post.postTitle,
        postContent: this.post.postContent,

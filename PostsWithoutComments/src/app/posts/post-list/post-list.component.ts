@@ -14,6 +14,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   postsSub: Subscription;
   isAllowed = false;
   authSub: Subscription;
+  isLoading = true;
 
   constructor(
     private postService: PostService,
@@ -24,19 +25,34 @@ export class PostListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.postService.getPosts().then(
       (result: Post[]) => {
+        console.log(this.isLoading);
         this.posts = result;
+        this.isLoading = false;
+        console.log(this.isLoading);
       }
     );
     this.postsSub = this.postService.postsChanged
     .subscribe(
       (posts: Post[]) => {
+        this.isLoading = true;
         this.posts = posts;
+        this.isLoading = false;
       }
     );
     this.authSub = this.postService.isAuthenticated.subscribe((isAuth: boolean) => {
       this.isAllowed = isAuth;
     });
   }
+
+  onNewPost() {
+    this.router.navigate(['new'], {relativeTo: this.route});
+  }
+
+  ngOnDestroy(): void {
+    this.postsSub.unsubscribe();
+    this.authSub.unsubscribe();
+  }
+
   // getcurrentauthuser(): Promise<CognitoUser> {
   //   return Auth.currentAuthenticatedUser();
   // }
@@ -47,14 +63,5 @@ export class PostListComponent implements OnInit, OnDestroy {
   //     }
   //   )
   // }
-
-  onNewPost() {
-    this.router.navigate(['new'], {relativeTo: this.route});
-  }
-
-  ngOnDestroy(): void {
-    this.postsSub.unsubscribe();
-    this.authSub.unsubscribe();
-  }
 
 }
