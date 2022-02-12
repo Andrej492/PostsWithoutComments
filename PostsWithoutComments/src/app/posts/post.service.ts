@@ -58,7 +58,7 @@ export class PostService implements OnInit {
     this.dataIsLoading.next(true);
     this.dataEdited.next(false);
     this.userData = post;
-    let postTitle = post.postTitle;3
+    let postTitle = post.postTitle;
     let postContent = post.postContent;
     let postImagePath = post.postImagePath;
     Auth.currentSession()

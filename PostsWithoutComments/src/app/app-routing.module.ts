@@ -6,6 +6,8 @@ import { PostEditComponent } from './posts/post-edit/post-edit.component';
 import { PostDetailComponent } from './posts/post-detail/post-detail.component';
 import { PostStartComponent } from './posts/post-start/post-start.component';
 import { PostsResolverService } from './posts/posts-resolver.service';
+import { CommentCreateComponent } from './comment-list/comment-create/comment-create.component';
+import { CommentListComponent } from './comment-list/comment-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/posts', pathMatch: 'full'},

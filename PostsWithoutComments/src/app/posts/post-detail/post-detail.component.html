@@ -35,10 +35,19 @@
   <hr>
   <div class="row">
     <div class="col-xs-12">
-      <div *ngIf="false">
-        <button [disabled]="!isLoggedIn" class="btn btn-secondary" (click)="onAddComment()">Comment Post</button>
-      </div>
+      <h2 class="title">Comments</h2>
+      <ng-container *ngIf="comments.length > 0">
+        <app-comment-list
+        *ngIf="comments.length > 0; else noCommentsYet"
+        (commentsList) = "loadComments(post.id)">
+        </app-comment-list>
+        <p>{{ comments.length }}</p>
+      <ng-template #noCommentsYet><h3>No comments yet!</h3></ng-template>
+      </ng-container>
+      <app-comment-create
+        [postId] = "post.id">
+      </app-comment-create>
     </div>
   </div>
 </div>
-
+<br>

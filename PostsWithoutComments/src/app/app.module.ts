@@ -14,6 +14,8 @@ import { PostDetailComponent } from './posts/post-detail/post-detail.component';
 import { PostEditComponent } from './posts/post-edit/post-edit.component';
 import { PostItemComponent } from './posts/post-list/post-item/post-item.component';
 import { PostStartComponent } from './posts/post-start/post-start.component';
+import { CommentListComponent } from './comment-list/comment-list.component';
+import { CommentCreateComponent } from './comment-list/comment-create/comment-create.component';
 
 
 @NgModule({
@@ -26,7 +28,9 @@ import { PostStartComponent } from './posts/post-start/post-start.component';
     PostDetailComponent,
     PostEditComponent,
     PostItemComponent,
-    PostStartComponent
+    PostStartComponent,
+    CommentListComponent,
+    CommentCreateComponent
   ],
   imports: [
     BrowserModule,

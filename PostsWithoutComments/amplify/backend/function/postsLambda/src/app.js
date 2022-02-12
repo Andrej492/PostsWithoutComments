@@ -114,6 +114,35 @@ app.post("/posts", function(request, response) {
   });
 });
 
+app.post("/posts/:id", function(request,response) {
+  let params = {
+    TableName: tableName,
+    Item : {
+      id: request.params.id,
+      comments: [{
+        commentId: uuidv4(),
+        commentContent: request.body.comment.commentContent,
+        commentOwnerId: getUserId(request)
+      }]
+    }
+  }
+  dynamodb.put(params, (err, result) => {
+    if(err) {
+      response.json({
+        statusCode: 500,
+        error: err.message,
+        url: request.url
+      });
+    } else{
+      response.json({
+        success: 'post call succeed!',
+        url: request.url,
+        body: JSON.stringify(params.Item)
+      })
+    }
+  });
+});
+
 app.put("/posts", function(request, response) {
   let params = {
     TableName: tableName,
@@ -141,6 +170,7 @@ app.put("/posts", function(request, response) {
     }
   });
 });
+
 
 app.delete("/posts/:id", function(request, response) {
   let params = {

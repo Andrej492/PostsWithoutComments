@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Auth } from 'aws-amplify';
 import { Subscription } from 'rxjs';
+import { CommentService } from 'src/app/comment-list/comment.service';
 import { Post } from '../post.model';
 import { PostService } from '../post.service';
 
@@ -19,11 +20,13 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   postOwnerId: string;
   isAuthorOfPost: boolean;
   isLoading = true;
+  comments: Comment[] = [];
 
   constructor(
     private postService: PostService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private commentService: CommentService
   ) { }
 
   ngOnInit(): void {
@@ -56,6 +59,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
           } else {
             this.isAuthorOfPost = false;
           }
+          this.loadComments(this.postId);
         });
       })
     });
@@ -72,8 +76,17 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     this.postService.deletePost(this.postId, this.id);
     this.router.navigate(['/posts']);
   }
-  onAddComment() {}
 
+  loadComments(postId: string): void {
+    this.commentService.getComments(postId)
+    .then((result) => {
+      this.comments = result;
+      console.log(result);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  }
   ngOnDestroy(): void {
     this.subscriptionAuth.unsubscribe();
   }
