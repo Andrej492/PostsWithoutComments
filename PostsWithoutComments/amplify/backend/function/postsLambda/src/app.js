@@ -114,16 +114,39 @@ app.post("/posts", function(request, response) {
   });
 });
 
+function appendComments(postId, comment) {
+  return dynamodb.update({
+    TableName: tableName,
+    Key: { id: postId },
+    ReturnValues: 'ALL_NEW',
+    UpdateExpression: 'set #comments = list_append(if_not_exists(#comments, :empty_list), :comment)',
+    ExpressionAttributeNames: {
+      '#comments': 'comments'
+    },
+    ExpressionAttributeValues: {
+      ':comment': [comment],
+      ':empty_list': []
+    }
+  }).promise()
+}
+
 app.post("/posts/:id", function(request,response) {
+  var appendedComments = [];
+  appendComments(request.params.id,
+    {
+      commentId: uuidv4(),
+      commentContent: request.body.comments.commentContent,
+      commentOwnerId: getUserId(request)
+    }
+  ).then(res => {
+      appendedComments = res;
+      console.log(res);
+    }
+  )
   let params = {
     TableName: tableName,
     Item : {
-      id: request.params.id,
-      comments: [{
-        commentId: uuidv4(),
-        commentContent: request.body.comment.commentContent,
-        commentOwnerId: getUserId(request)
-      }]
+      comments: appendedComments
     }
   }
   dynamodb.put(params, (err, result) => {

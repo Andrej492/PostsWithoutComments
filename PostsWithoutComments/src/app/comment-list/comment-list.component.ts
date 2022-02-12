@@ -9,26 +9,22 @@ import { CommentService } from './comment.service';
   styleUrls: ['./comment-list.component.css']
 })
 export class CommentListComponent implements OnInit, OnDestroy {
-  @Input() id: number;
-  @Input() commentsList: Comment[] = [];
   commentSub: Subscription;
-  commented = new Subject<number>();
-  comments: Comment[];
+  comments: Comment[] = [];
   showButtonReply = false;
-  currentComment: Comment | null = null;
 
-  constructor(
-    private commentService: CommentService
-  ) {}
+  constructor(private commentService: CommentService) {}
 
   ngOnInit(): void {
-    this.commentSub = this.commentService.commentsChanged.subscribe((result: Comment[])=> {
-      this.comments = result;
-      console.log(this.comments);
-      console.log(this.commentsList);
-    })
     console.log(this.comments);
-    console.log(this.commentsList);
+    this.commentSub = this.commentService.commentsChanged.subscribe( data => {
+      console.log(data);
+      this.comments = data;
+      console.log(this.comments);
+    }, err => {
+      console.log(err);
+    });
+    console.log(this.comments);
   }
 
   toggleComment(close: boolean): void {

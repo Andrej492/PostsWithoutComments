@@ -17,10 +17,13 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   postId: string;
   isLoggedIn = false;
   subscriptionAuth: Subscription;
+  commentSub: Subscription;
+  commentsSub: Comment[];
   postOwnerId: string;
   isAuthorOfPost: boolean;
   isLoading = true;
   comments: Comment[] = [];
+  isLoadingComments = false;
 
   constructor(
     private postService: PostService,
@@ -60,6 +63,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
             this.isAuthorOfPost = false;
           }
           this.loadComments(this.postId);
+          this.isLoadingComments = false;
         });
       })
     });
@@ -80,6 +84,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   loadComments(postId: string): void {
     this.commentService.getComments(postId)
     .then((result) => {
+      this.isLoadingComments = true;
       this.comments = result;
       console.log(result);
     })

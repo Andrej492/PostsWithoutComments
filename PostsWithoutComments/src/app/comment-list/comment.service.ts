@@ -21,7 +21,6 @@ export class CommentService{
     .then(result => {
       const res = JSON.parse(result.body);
       this.comments = res.comments;
-      console.log(this.comments);
       this.commentsChanged.next(this.comments.slice());
       return this.comments;
     })
@@ -39,7 +38,7 @@ export class CommentService{
         `/posts/${id}`,
         {
           body: {
-            comment : {
+            comments : {
               commentContent: comment.commentContent
             }
           },
@@ -50,9 +49,10 @@ export class CommentService{
       )
       .then((result) => {
         const res = JSON.parse(result.body);
-        const comment: Comment = res.comments;
-        console.log(result);
+        comment = res.comments;
+        console.log(comment);
         this.comments.push(comment);
+        console.log(this.comments);
         this.commentsChanged.next(this.comments.slice());
       })
       .catch(err => {

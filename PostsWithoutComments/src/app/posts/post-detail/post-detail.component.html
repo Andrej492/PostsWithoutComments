@@ -36,10 +36,9 @@
   <div class="row">
     <div class="col-xs-12">
       <h2 class="title">Comments</h2>
-      <ng-container *ngIf="comments.length > 0">
+      <ng-container *ngIf="isLoadingComments">
         <app-comment-list
-        *ngIf="comments.length > 0; else noCommentsYet"
-        (commentsList) = "loadComments(post.id)">
+        *ngIf="comments.length > 0; else noCommentsYet">
         </app-comment-list>
         <p>{{ comments.length }}</p>
       <ng-template #noCommentsYet><h3>No comments yet!</h3></ng-template>
