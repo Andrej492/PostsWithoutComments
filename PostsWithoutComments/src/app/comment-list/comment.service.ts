@@ -19,7 +19,6 @@ export class CommentService{
       {}
       )
     .then(result => {
-      console.log(result);
       const res = JSON.parse(result.body);
       this.comments = res.comments;
       console.log(this.comments);
