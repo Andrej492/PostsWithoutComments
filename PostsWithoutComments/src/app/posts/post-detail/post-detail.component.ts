@@ -91,6 +91,11 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       console.log(err);
     });
   }
+
+  onAddComment() {
+    this.router.navigate(['comment']);
+  }
+
   ngOnDestroy(): void {
     this.subscriptionAuth.unsubscribe();
   }

@@ -7,7 +7,7 @@ import { PostDetailComponent } from './posts/post-detail/post-detail.component';
 import { PostStartComponent } from './posts/post-start/post-start.component';
 import { PostsResolverService } from './posts/posts-resolver.service';
 import { CommentCreateComponent } from './comment-list/comment-create/comment-create.component';
-import { CommentListComponent } from './comment-list/comment-list.component';
+
 
 const routes: Routes = [
   { path: '', redirectTo: '/posts', pathMatch: 'full'},
@@ -17,7 +17,11 @@ const routes: Routes = [
       { path: '', component: PostStartComponent },
       { path: 'new', component: PostEditComponent },
       { path: ':id', component: PostDetailComponent, resolve: [PostsResolverService]},
-      { path: ':id/edit', component: PostEditComponent, resolve: [PostsResolverService]}
+      { path: ':id/edit', component: PostEditComponent, resolve: [PostsResolverService],
+        children: [
+          { path: 'comment', component: CommentCreateComponent, resolve: [PostsResolverService]}
+        ]
+      }
     ]
   }
 ];

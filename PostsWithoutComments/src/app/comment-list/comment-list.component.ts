@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Comment } from './comment.model';
 import { CommentService } from './comment.service';
@@ -14,7 +15,8 @@ export class CommentListComponent implements OnInit, OnDestroy {
   comments: Comment[] = [];
   showButtonReply = false;
 
-  constructor(private commentService: CommentService) {}
+  constructor(private commentService: CommentService,
+    private router: Router) {}
 
   ngOnInit(): void {
     this.commentService.getComments(this.postById)
@@ -27,6 +29,22 @@ export class CommentListComponent implements OnInit, OnDestroy {
     }, err => {
       console.log(err);
     });
+  }
+
+  onEditComment(comment: Comment) {
+    this.commentService.isEditing.next(true);
+    let commentUpdate: Comment = {
+      commentId: comment.commentId,
+      commentOwnerId: comment.commentOwnerId,
+      commentContent: comment.commentContent,
+      commentOwnerUsername: comment.commentOwnerUsername
+    }
+    this.commentService.editedComment.next(commentUpdate);
+  }
+
+  onDeleteComment(commentId: string) {
+    this.commentService.deleteComment(this.postById, commentId);
+    this.router.navigate(['/posts']);
   }
 
   toggleComment(close: boolean): void {

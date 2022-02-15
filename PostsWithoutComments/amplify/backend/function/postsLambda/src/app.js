@@ -3,9 +3,7 @@ var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware'
 var bodyParser = require('body-parser')
 var express = require('express')
 const { v4: uuidv4 } = require('uuid')
-
 AWS.config.update({ region: process.env.TABLE_REGION });
-
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 let tableName = "postsTable";
@@ -26,8 +24,6 @@ const getUserId = request => {
 var app = express()
 app.use(bodyParser.json())
 app.use(awsServerlessExpressMiddleware.eventContext())
-
-
 app.use(function ( request, response, next) {
   response.header("Access-Control-Allow-Origin", "*");
   response.header(
@@ -36,7 +32,6 @@ app.use(function ( request, response, next) {
     "Accept, Authorization");
   next();
 });
-
 app.get("/posts", function(request, response) {
   let params = {
     TableName: tableName,
@@ -57,7 +52,6 @@ app.get("/posts", function(request, response) {
     }
   });
 });
-
 app.get("/posts/:id", function(request, response) {
   let params = {
     TableName: tableName,
@@ -84,9 +78,7 @@ app.get("/posts/:id", function(request, response) {
     }
   });
 });
-
 app.post("/posts", function(request, response) {
-  //const username = request.apiGateway.event.requestContext.identity.usernameCognito;
   let params = {
     TableName: tableName,
     Item: {
@@ -113,6 +105,62 @@ app.post("/posts", function(request, response) {
     }
   });
 });
+app.put("/posts", function(request, response) {
+  let params = {
+    TableName: tableName,
+    Item : {
+      id: request.body.id,
+      postTitle: request.body.postTitle,
+      postContent: request.body.postContent,
+      postImagePath: request.body.postImagePath,
+      postOwnerId: getUserId(request)
+    }
+  }
+  dynamodb.put(params, (err, result) => {
+    if(err) {
+      response.json({
+        statusCode: 500,
+        error: err.message,
+        url: request.url
+      });
+    } else{
+      response.json({
+        success: 'put call succeed!',
+        url: request.url,
+        body: JSON.stringify(params.Item)
+      })
+    }
+  });
+});
+app.delete("/posts/:id", function(request, response) {
+  let params = {
+    TableName: tableName,
+    Key: {
+      id: request.params.id
+    }
+  }
+  dynamodb.delete(params, (err, result)=> {
+    if(err) {
+      response.json({
+        statusCode: 500,
+        error: err.message,
+        url: request.url
+      });
+    } else {
+      response.json({
+        success: 'delete call succeed!',
+        statusCode: 200,
+        url: request.url,
+        body: JSON.stringify(result)
+      });
+    }
+  });
+});
+
+app.listen(3000, function() {
+    console.log("App started")
+});
+
 
 function appendComments(postId, comment) {
   return dynamodb.update({
@@ -137,7 +185,7 @@ app.post("/posts/:id", function(request,response) {
       commentId: uuidv4(),
       commentContent: request.body.comments.commentContent,
       commentOwnerId: getUserId(request),
-      commentOwnerUsername: request.body.comments.commentUsername
+      commentOwnerUsername: request.body.comments.commentOwnerUsername
     }
   ).then(res => {
       appendedComments = res;
@@ -167,15 +215,23 @@ app.post("/posts/:id", function(request,response) {
   });
 });
 
-app.put("/posts", function(request, response) {
+app.put("/posts/:id", function(request,response) {
+  appendComments(request.params.id,
+    {
+      commentId: request.body.comments.commentId,
+      commentContent: request.body.comments.commentContent,
+      commentOwnerId: getUserId(request),
+      commentOwnerUsername: request.body.comments.commentOwnerUsername
+    }
+  ).then(res => {
+      appendedComments = res;
+      console.log(res);
+    }
+  )
   let params = {
     TableName: tableName,
     Item : {
-      id: request.body.id,
-      postTitle: request.body.postTitle,
-      postContent: request.body.postContent,
-      postImagePath: request.body.postImagePath,
-      postOwnerId: getUserId(request)
+      comments: appendedComments
     }
   }
   dynamodb.put(params, (err, result) => {
@@ -187,42 +243,12 @@ app.put("/posts", function(request, response) {
       });
     } else{
       response.json({
-        success: 'put call succeed!',
+        success: 'post call succeed!',
         url: request.url,
         body: JSON.stringify(params.Item)
       })
     }
   });
-});
-
-
-app.delete("/posts/:id", function(request, response) {
-  let params = {
-    TableName: tableName,
-    Key: {
-      id: request.params.id
-    }
-  }
-  dynamodb.delete(params, (err, result)=> {
-    if(err) {
-      response.json({
-        statusCode: 500,
-        error: err.message,
-        url: request.url
-      });
-    } else {
-      response.json({
-        success: 'delete call succeed!',
-        statusCode: 200,
-        url: request.url,
-        body: JSON.stringify(result)
-      });
-    }
-  });
-});
-
-app.listen(3000, function() {
-    console.log("App started")
 });
 
 module.exports = app
