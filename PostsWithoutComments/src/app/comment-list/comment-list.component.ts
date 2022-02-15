@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Comment } from './comment.model';
 import { CommentService } from './comment.service';
 
@@ -9,6 +9,7 @@ import { CommentService } from './comment.service';
   styleUrls: ['./comment-list.component.css']
 })
 export class CommentListComponent implements OnInit, OnDestroy {
+  @Input() postById: string;
   commentSub: Subscription;
   comments: Comment[] = [];
   showButtonReply = false;
@@ -16,15 +17,16 @@ export class CommentListComponent implements OnInit, OnDestroy {
   constructor(private commentService: CommentService) {}
 
   ngOnInit(): void {
-    console.log(this.comments);
-    this.commentSub = this.commentService.commentsChanged.subscribe( data => {
+    this.commentService.getComments(this.postById)
+    .then((result) => {
+      this.comments = result;
+    })
+    this.commentSub = this.commentService.getCommentsByIdObs().subscribe( data => {
       console.log(data);
-      this.comments = data;
-      console.log(this.comments);
+      //this.comments = data;
     }, err => {
       console.log(err);
     });
-    console.log(this.comments);
   }
 
   toggleComment(close: boolean): void {

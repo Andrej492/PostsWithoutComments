@@ -38,6 +38,7 @@
       <h2 class="title">Comments</h2>
       <ng-container *ngIf="isLoadingComments">
         <app-comment-list
+        [postById]="post.id"
         *ngIf="comments.length > 0; else noCommentsYet">
         </app-comment-list>
         <p>{{ comments.length }}</p>

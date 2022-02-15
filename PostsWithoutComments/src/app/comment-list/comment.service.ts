@@ -1,16 +1,35 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy, OnInit } from "@angular/core";
 import { API, Auth } from "aws-amplify";
-import { Subject } from "rxjs";
+import { Observable, Subject, Subscription } from "rxjs";
+import { PostService } from "../posts/post.service";
 import { Comment } from "./comment.model";
 
 @Injectable({providedIn: 'root'})
-export class CommentService{
+export class CommentService implements OnInit, OnDestroy{
   private comments: Comment[] = [];
-  commentsChanged = new Subject<Comment[]>();
+  public commentsChanged: Subject<Comment[]> = new Subject<Comment[]>();
   comment: Comment;
+  authUsernameSub: Subscription;
+  commentUsername: string = 'not Logged';
 
-  constructor() {}
+  constructor(private postService: PostService) {}
 
+  ngOnInit(): void {}
+
+  getCommentUsername(): string {
+    this.authUsernameSub = this.postService.authUsername.subscribe((username: string)=> {
+      this.commentUsername = username;
+    }, err => {
+      console.log(err);
+      let usr = 'not Logged';
+      this.commentUsername = usr;
+    });
+    return this.commentUsername;
+  }
+
+  getCommentsByIdObs(): Observable<Comment[]> {
+    return this.commentsChanged.asObservable();
+  }
 
   getComments(postId: string) {
     return API.get(
@@ -39,7 +58,8 @@ export class CommentService{
         {
           body: {
             comments : {
-              commentContent: comment.commentContent
+              commentContent: comment.commentContent,
+              commentUsername: this.getCommentUsername()
             }
           },
           headers: new Headers({
@@ -50,9 +70,7 @@ export class CommentService{
       .then((result) => {
         const res = JSON.parse(result.body);
         comment = res.comments;
-        console.log(comment);
         this.comments.push(comment);
-        console.log(this.comments);
         this.commentsChanged.next(this.comments.slice());
       })
       .catch(err => {
@@ -63,4 +81,9 @@ export class CommentService{
       console.log(err);
     })
   }
+
+  ngOnDestroy(): void {
+    this.authUsernameSub.unsubscribe();
+  }
+
 }

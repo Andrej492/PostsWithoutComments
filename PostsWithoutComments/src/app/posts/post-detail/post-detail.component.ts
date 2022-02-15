@@ -30,7 +30,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private commentService: CommentService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
@@ -86,7 +86,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     .then((result) => {
       this.isLoadingComments = true;
       this.comments = result;
-      console.log(result);
     })
     .catch(err => {
       console.log(err);

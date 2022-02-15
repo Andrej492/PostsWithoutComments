@@ -1,7 +1,8 @@
 <div *ngFor="let comment of comments">
   <ul class="list-group-item">
     <li class="list-item">
-    {{comment.commentContent}}
+      {{comment.commentContent}}
+      <p>created by: {{ comment.commentUsername }}</p>
     </li>
   </ul>
 </div>

@@ -136,7 +136,8 @@ app.post("/posts/:id", function(request,response) {
     {
       commentId: uuidv4(),
       commentContent: request.body.comments.commentContent,
-      commentOwnerId: getUserId(request)
+      commentOwnerId: getUserId(request),
+      commentOwnerUsername: request.body.comments.commentUsername
     }
   ).then(res => {
       appendedComments = res;

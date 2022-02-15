@@ -15,11 +15,13 @@ export class PostsComponent implements OnInit {
     Auth.currentAuthenticatedUser({
       bypassCache: false
     })
-    .then(() => {
+    .then((user) => {
+      this.postService.authUsername.next(user.username);
       this.postService.isAuthenticated.next(true);
     })
     .catch(() => {
       this.postService.isAuthenticated.next(false);
+      this.postService.authUsername.next('not Logged');
     });
   }
 
