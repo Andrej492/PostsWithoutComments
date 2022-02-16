@@ -215,26 +215,43 @@ app.post("/posts/:id", function(request,response) {
   });
 });
 
+function updateComments(postId, comment) {
+  return dynamodb.update({
+    TableName: tableName,
+    Key: { id: postId },
+    UpdateExpression: 'SET comments[" + itemnum +"].commentContent = :comment',
+    ExpressionAttributeNames: {
+      '#comments': 'comments'
+    },
+    ExpressionAttributeValues: {
+      ':comment': [comment.commentContent]
+    },
+    ReturnValues: 'UPDATED_NEW'
+  }).promise()
+}
+
 app.put("/posts/:id", function(request,response) {
-  appendComments(request.params.id,
+  var updatedComments = [];
+  updateComments(request.params.id,
     {
       commentId: request.body.comments.commentId,
       commentContent: request.body.comments.commentContent,
-      commentOwnerId: getUserId(request),
+      commentOwnerId: request.body.comments.comment,
       commentOwnerUsername: request.body.comments.commentOwnerUsername
     }
   ).then(res => {
-      appendedComments = res;
+      updatedComments = res;
       console.log(res);
     }
   )
   let params = {
     TableName: tableName,
+    Key: { id: request.params.id },
     Item : {
-      comments: appendedComments
+      comments: updatedComments
     }
   }
-  dynamodb.put(params, (err, result) => {
+  dynamodb.update(params, (err, result) => {
     if(err) {
       response.json({
         statusCode: 500,
@@ -243,7 +260,7 @@ app.put("/posts/:id", function(request,response) {
       });
     } else{
       response.json({
-        success: 'post call succeed!',
+        success: 'put call succeed!',
         url: request.url,
         body: JSON.stringify(params.Item)
       })

@@ -25,7 +25,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
     })
     this.commentSub = this.commentService.getCommentsByIdObs().subscribe( data => {
       console.log(data);
-      //this.comments = data;
+      this.comments = data;
     }, err => {
       console.log(err);
     });

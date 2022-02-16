@@ -28,7 +28,6 @@ export class CommentCreateComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.editCommentSub = this.commentService.editedComment.subscribe((resultComment) => {
       this.comment = resultComment;
-      console.log(this.comment);
       if(this.editMode) {
         this.commentForm.setValue({
           commentContent: this.comment.commentContent
@@ -37,7 +36,6 @@ export class CommentCreateComponent implements OnInit, OnDestroy {
     });
     this.editModeSub = this.commentService.isEditing.subscribe((res => {
       this.editMode = res;
-      console.log(this.editMode);
     }));
     this.commentForm = new FormGroup({
       'commentContent': new FormControl(
@@ -53,7 +51,8 @@ export class CommentCreateComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     if (this.editMode) {
-      this.commentService.updateComment(this.postId, this.commentForm.value);
+      this.comment.commentContent = this.commentForm.value;
+      this.commentService.updateComment(this.postId, this.comment);
     } else {
       this.commentService.postComment(this.postId, this.commentForm.value);
     }

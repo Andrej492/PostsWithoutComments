@@ -15,7 +15,7 @@ export class PostService implements OnInit {
   post: Post;
   postGet: Post;
   isAuthenticated = new BehaviorSubject<boolean>(false);
-  authUsername = new BehaviorSubject<string>('not Logged');
+  authUsername = new BehaviorSubject<string>('');
 
   ngOnInit(): void {}
 

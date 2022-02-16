@@ -19,7 +19,7 @@
       "function": {
         "postsLambda": {
           "deploymentBucketName": "amplify-postswithoutcomments-dev-151952-deployment",
-          "s3Key": "amplify-builds/postsLambda-6f30343241583675475a-build.zip"
+          "s3Key": "amplify-builds/postsLambda-575232626f72514f7331-build.zip"
         }
       },
       "hosting": {

@@ -89,14 +89,19 @@ export class CommentService implements OnInit, OnDestroy{
     .then(session => {
       API.put('postsRestApi', `/posts/${id}`, {
         body: {
-          commentId: comment.commentId,
-          commentContent: comment.commentContent
+          comments: {
+            commentId: comment.commentId,
+            commentContent: comment.commentContent,
+            commentOwnerUsername: comment.commentOwnerUsername,
+            commentOwnerId: comment.commentOwnerId
+          }
         },
         headers: new Headers({
           'Authorization': session.getIdToken().getJwtToken()
         })
       })
       .then((result) => {
+        console.log(result);
         const res = JSON.parse(result.body);
         const updatedComment: Comment = res.comments;
         this.comments['commentId'] = updatedComment;
