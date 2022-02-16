@@ -219,12 +219,13 @@ function updateComments(postId, comment) {
   return dynamodb.update({
     TableName: tableName,
     Key: { id: postId },
-    UpdateExpression: 'SET comments[" + itemnum +"].commentContent = :comment',
+    UpdateExpression: 'set #comments[:i] = :comment',
     ExpressionAttributeNames: {
       '#comments': 'comments'
     },
     ExpressionAttributeValues: {
-      ':comment': [comment.commentContent]
+      ':i' : itemnum,
+      ':comment': [comment]
     },
     ReturnValues: 'UPDATED_NEW'
   }).promise()
@@ -243,7 +244,7 @@ app.put("/posts/:id", function(request,response) {
       updatedComments = res;
       console.log(res);
     }
-  )
+  ).catch(err => console.log(err));
   let params = {
     TableName: tableName,
     Key: { id: request.params.id },
