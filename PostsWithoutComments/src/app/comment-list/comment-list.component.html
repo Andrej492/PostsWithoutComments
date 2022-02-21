@@ -1,14 +1,24 @@
-<div *ngFor="let comment of comments; let i = index" >
+<div *ngFor="let comment of comments; let i = index">
   <ul class="list-group-item">
     <li class="list-item">
       <span> {{ comment.commentContent }} </span>
       <div><img src="https://i.imgur.com/tPvlEdq.jpg" width="18" height="18"><span class="text2">{{ comment.commentOwnerUsername }}</span></div>
-      <div><span class="text3 text3o">Liked</span><span class="thumbup"><i class="fa fa-thumbs-up thumbupo"></i></span><span class="text4 text4i">1</span></div>
-      <div><span class="text3 text3o">Disliked</span><span class="thumbup"><i class="fa fa-thumbs-up thumbupo"></i></span><span class="text4 text4i">-1</span></div>
+      <div><span class="text3 text3o">Likes</span><span class="thumbup"><i class="fa fa-thumbs-up thumbupo"></i></span><span class="text4 text4i">0</span></div>
+      <div><span class="text3 text3o">Dislikes</span><span class="thumbup"><i class="fa fa-thumbs-up thumbupo"></i></span><span class="text4 text4i">0</span></div>
       <div class="row">
         <div class="col-xs-12">
-          <button type="button" class="btn btn-primary" style="cursor: pointer;" (click)="onEditComment(comment)">Edit Comment</button> |
-          <button class="btn btn-danger" style="cursor: pointer;" (click)="onDeleteComment(comment.commentId)">Delete Comment</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            style="cursor: pointer;"
+            (click)="onEditComment(comment)"
+            [disabled]="comment.commentOwnerUsername !== loggedUser">Edit Comment</button> |
+          <button
+            class="btn btn-danger"
+            style="cursor: pointer;"
+            (click)="onDeleteComment(comment.commentId)"
+            [disabled]="comment.commentOwnerUsername !== loggedUser"
+            >Delete Comment</button>
         </div>
       </div>
     </li>

@@ -41,7 +41,6 @@ export class CommentCreateComponent implements OnInit, OnDestroy {
       for(let i = 0; i < this.comments.length; i++) {
         if(this.comments[i].commentId === this.comment.commentId){
           this.index = i;
-          console.log(this.index);
         }
       }
       if(this.editMode) {
@@ -67,7 +66,6 @@ export class CommentCreateComponent implements OnInit, OnDestroy {
         commentContent: this.commentForm.value.commentContent,
         commentOwnerUsername: this.comment.commentOwnerUsername
       }
-      console.log(comment);
       this.commentService.updateComment(this.postId, this.index, comment);
     } else {
       this.commentService.postComment(this.postId, this.commentForm.value);

@@ -14,11 +14,14 @@ export class CommentListComponent implements OnInit, OnDestroy {
   commentSub: Subscription;
   comments: Comment[] = [];
   showButtonReply = false;
+  commentAuthor: string;
+  loggedUser: string;
 
   constructor(private commentService: CommentService,
     private router: Router) {}
 
   ngOnInit(): void {
+    this.loggedUser = this.commentService.getCommentUsername();
     this.commentService.getComments(this.postById)
     .then((result) => {
       this.comments = result;

@@ -85,7 +85,6 @@ export class CommentService implements OnInit, OnDestroy{
   }
 
   updateComment(id: string, index: number, comment: Comment) {
-    console.log(comment);
     Auth.currentSession()
     .then(session => {
       API.put('postsRestApi', `/posts/${id}`, {
