@@ -102,9 +102,9 @@ export class PostService implements OnInit {
     .then((session) => {
       API.del(
         'postsRestApi',
-        `/posts/${id}`,
+        '/posts',
         {
-          body: {},
+          body: {id},
           headers: new Headers({
             'Authorization': session.getIdToken().getJwtToken()
           })

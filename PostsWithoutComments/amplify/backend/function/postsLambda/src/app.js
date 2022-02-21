@@ -132,11 +132,11 @@ app.put("/posts", function(request, response) {
     }
   });
 });
-app.delete("/posts/:id", function(request, response) {
+app.delete("/posts", function(request, response) {
   let params = {
     TableName: tableName,
     Key: {
-      id: request.params.id
+      id: request.body.id
     }
   }
   dynamodb.delete(params, (err, result)=> {
