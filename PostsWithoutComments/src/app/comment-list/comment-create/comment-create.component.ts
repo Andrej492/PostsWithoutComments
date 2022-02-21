@@ -26,6 +26,16 @@ export class CommentCreateComponent implements OnInit, OnDestroy {
     private router: Router) { }
 
   ngOnInit(): void {
+    this.commentForm = new FormGroup({
+      'commentContent': new FormControl(
+        null,
+        {validators: [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(200)]}
+        )
+    });
+    this.setForm();
     this.editCommentSub = this.commentService.editedComment.subscribe((resultComment) => {
       this.comment = resultComment;
       for(let i = 0; i < this.comments.length; i++) {
@@ -43,16 +53,6 @@ export class CommentCreateComponent implements OnInit, OnDestroy {
     this.editModeSub = this.commentService.isEditing.subscribe((res => {
       this.editMode = res;
     }));
-    this.commentForm = new FormGroup({
-      'commentContent': new FormControl(
-        null,
-        {validators: [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(200)]}
-        )
-    });
-    this.setForm();
     this.commentService.getComments(this.postId)
     .then((result) => {
       this.comments = result;
@@ -61,8 +61,14 @@ export class CommentCreateComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     if (this.editMode) {
-      this.comment.commentContent = this.commentForm.value;
-      this.commentService.updateComment(this.postId, this.comment);
+      let comment = {
+        commentId: this.comment.commentId,
+        commentOwnerId: this.comment.commentOwnerId,
+        commentContent: this.commentForm.value.commentContent,
+        commentOwnerUsername: this.comment.commentOwnerUsername
+      }
+      console.log(comment);
+      this.commentService.updateComment(this.postId, this.index, comment);
     } else {
       this.commentService.postComment(this.postId, this.commentForm.value);
     }
@@ -71,6 +77,7 @@ export class CommentCreateComponent implements OnInit, OnDestroy {
 
   onCancel() {
     this.router.navigate(['../'], { relativeTo: this.route});
+    this.editMode = false;
   }
 
   onClear() {

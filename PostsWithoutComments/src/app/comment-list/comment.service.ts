@@ -84,12 +84,14 @@ export class CommentService implements OnInit, OnDestroy{
     })
   }
 
-  updateComment(id: string, comment: Comment) {
+  updateComment(id: string, index: number, comment: Comment) {
+    console.log(comment);
     Auth.currentSession()
     .then(session => {
       API.put('postsRestApi', `/posts/${id}`, {
         body: {
           comments: {
+            commentIndex: index,
             commentId: comment.commentId,
             commentContent: comment.commentContent,
             commentOwnerUsername: comment.commentOwnerUsername,
@@ -101,7 +103,6 @@ export class CommentService implements OnInit, OnDestroy{
         })
       })
       .then((result) => {
-        console.log(result);
         const res = JSON.parse(result.body);
         const updatedComment: Comment = res.comments;
         this.comments['commentId'] = updatedComment;

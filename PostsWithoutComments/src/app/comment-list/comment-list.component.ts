@@ -24,11 +24,11 @@ export class CommentListComponent implements OnInit, OnDestroy {
       this.comments = result;
     })
     this.commentSub = this.commentService.getCommentsByIdObs().subscribe( data => {
-      console.log(data);
       this.comments = data;
     }, err => {
       console.log(err);
     });
+    this.commentService.isEditing.next(false);
   }
 
   onEditComment(comment: Comment) {

@@ -215,17 +215,16 @@ app.post("/posts/:id", function(request,response) {
   });
 });
 
-function updateComments(postId, comment) {
+function updateComment(postId, index, commentContent) {
   return dynamodb.update({
     TableName: tableName,
     Key: { id: postId },
-    UpdateExpression: 'set #comments[:i] = :comment',
+    UpdateExpression: 'set #comments['+ index +'].commentContent = :value',
     ExpressionAttributeNames: {
       '#comments': 'comments'
     },
     ExpressionAttributeValues: {
-      ':i' : itemnum,
-      ':comment': [comment]
+      ':value': commentContent
     },
     ReturnValues: 'ALL_NEW'
   }).promise()
@@ -233,14 +232,8 @@ function updateComments(postId, comment) {
 
 app.put("/posts/:id", function(request,response) {
   var updatedComments = [];
-  updateComments(request.params.id,
-    {
-      commentId: request.body.comments.commentId,
-      commentContent: request.body.comments.commentContent,
-      commentOwnerId: request.body.comments.comment,
-      commentOwnerUsername: request.body.comments.commentOwnerUsername
-    }
-  ).then(res => {
+  updateComment(request.params.id, request.body.comments.commentIndex, request.body.comments.commentContent
+    ).then(res => {
       updatedComments = res;
       console.log(res);
     }
