@@ -3,6 +3,7 @@ export class Comment {
     public commentId: string,
     public commentOwnerId: string,
     public commentContent: string,
-    public commentOwnerUsername: string
+    public commentOwnerUsername: string,
+    public commentIndex?: number
     ) {}
 }

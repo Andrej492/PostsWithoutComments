@@ -227,7 +227,7 @@ function updateComments(postId, comment) {
       ':i' : itemnum,
       ':comment': [comment]
     },
-    ReturnValues: 'UPDATED_NEW'
+    ReturnValues: 'ALL_NEW'
   }).promise()
 }
 

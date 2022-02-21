@@ -12,13 +12,13 @@ import { Comment } from "../comment.model";
 })
 export class CommentCreateComponent implements OnInit, OnDestroy {
   @Input() postId: string;
-  commentId: number | null = null;
-  buttonName: 'Comment' | 'Reply' = 'Comment';
   commentForm: FormGroup;
   editMode = false;
   comment: Comment;
+  comments: Comment[];
   editCommentSub: Subscription;
   editModeSub: Subscription;
+  index: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,6 +28,12 @@ export class CommentCreateComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.editCommentSub = this.commentService.editedComment.subscribe((resultComment) => {
       this.comment = resultComment;
+      for(let i = 0; i < this.comments.length; i++) {
+        if(this.comments[i].commentId === this.comment.commentId){
+          this.index = i;
+          console.log(this.index);
+        }
+      }
       if(this.editMode) {
         this.commentForm.setValue({
           commentContent: this.comment.commentContent
@@ -47,6 +53,10 @@ export class CommentCreateComponent implements OnInit, OnDestroy {
         )
     });
     this.setForm();
+    this.commentService.getComments(this.postId)
+    .then((result) => {
+      this.comments = result;
+    })
   }
 
   onSubmit() {
