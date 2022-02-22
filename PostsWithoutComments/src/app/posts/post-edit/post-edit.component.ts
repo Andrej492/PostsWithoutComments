@@ -51,7 +51,8 @@ export class PostEditComponent implements OnInit {
             postTitle: postData.postTitle,
             postContent: postData.postContent,
             postImagePath: postData.postImagePath,
-            postOwnerId: postData.postOwnerId
+            postOwnerId: postData.postOwnerId,
+            postOwnerUsername: postData.postOwnerUsername
           };
           this.postIdDatabase = this.post['id'];
         })

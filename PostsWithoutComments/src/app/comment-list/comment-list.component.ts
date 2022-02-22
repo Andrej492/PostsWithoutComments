@@ -23,9 +23,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
     private router: Router) {}
 
   ngOnInit(): void {
-    console.log(this.postInput);
     this.postAuthor = this.postInput.postOwnerUsername;
-    console.log(this.postAuthor);
     this.loggedUser = this.commentService.getCommentUsername();
     this.commentService.getComments(this.postById)
     .then((result) => {
