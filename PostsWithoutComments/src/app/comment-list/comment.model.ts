@@ -4,6 +4,9 @@ export class Comment {
     public commentOwnerId: string,
     public commentContent: string,
     public commentOwnerUsername: string,
-    public commentIndex?: number
+    public commentIndex?: number,
+    public commentEdited?: boolean,
+    public commentCreatedAt?: Date,
+    public commentUpdatedAt?: Date
     ) {}
 }

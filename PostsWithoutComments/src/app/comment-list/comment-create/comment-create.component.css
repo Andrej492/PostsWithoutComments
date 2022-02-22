@@ -1,0 +1,8 @@
+div {
+  margin-top: 2px;
+}
+
+textarea.ng-invalid.ng-touched {
+  border: 1px solid red;
+}
+

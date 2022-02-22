@@ -6,18 +6,6 @@
       *ngIf="commentForm">
       <div class="row">
         <div class="col-xs-12">
-          <button
-            type="submit"
-            class="btn btn-success"
-            [disabled]="!commentForm.valid">Save Comment</button>
-          <button
-            type="button"
-            class="btn btn-danger"
-            (click)="onCancel()">Cancel</button>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
           <div class="form-group">
             <label
               for="commentContent"
@@ -31,6 +19,30 @@
               formControlName="commentContent"
               placeholder="Enter Comment:"> Comment:
             </textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div *ngIf="editMode">
+            <button
+            type="submit"
+            class="btn btn-success"
+            [disabled]="!commentForm.valid">Save Comment</button> |
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="onCancel()">Cancel</button>
+          </div>
+          <div *ngIf="!editMode">
+            <button
+            type="submit"
+            class="btn btn-success"
+            [disabled]="!commentForm.valid">Post Comment</button> |
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="onCancel()">Cancel</button>
           </div>
         </div>
       </div>

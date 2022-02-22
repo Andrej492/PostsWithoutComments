@@ -8,7 +8,6 @@ import { Comment } from "./comment.model";
 export class CommentService implements OnInit, OnDestroy{
   private comments: Comment[] = [];
   public commentsChanged: Subject<Comment[]> = new Subject<Comment[]>();
-  comment: Comment;
   editedComment: Subject<Comment> = new Subject<Comment>();
   isEditing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   authUsernameSub: Subscription;
@@ -42,12 +41,29 @@ export class CommentService implements OnInit, OnDestroy{
     .then(result => {
       const res = JSON.parse(result.body);
       this.comments = res.comments;
+      this.comments = this.editCommentTimestampToData(this.comments);
       this.commentsChanged.next(this.comments.slice());
       return this.comments;
     })
     .catch(err => {
       return err;
     });
+  }
+
+  editCommentTimestampToData(comments: Comment[]): Comment[] {
+    for(let i = 0; i < comments.length; i++) {
+      if(comments[i].commentCreatedAt !== undefined) {
+        comments[i].commentCreatedAt = new Date(comments[i].commentCreatedAt);
+        var epoch = comments[i].commentCreatedAt.getTime();
+        comments[i].commentCreatedAt = new Date(epoch);
+      }
+      if(comments[i].commentUpdatedAt !== undefined) {
+        comments[i].commentUpdatedAt = new Date(comments[i].commentUpdatedAt);
+        var epoch = comments[i].commentUpdatedAt.getTime();
+        comments[i].commentUpdatedAt = new Date(epoch);
+      }
+    }
+    return comments;
   }
 
   postComment(id: string, comment: Comment) {
@@ -60,7 +76,8 @@ export class CommentService implements OnInit, OnDestroy{
           body: {
             comments : {
               commentContent: comment.commentContent,
-              commentOwnerUsername: this.getCommentUsername()
+              commentOwnerUsername: this.getCommentUsername(),
+              commentEdited: false
             }
           },
           headers: new Headers({
@@ -93,7 +110,8 @@ export class CommentService implements OnInit, OnDestroy{
             commentId: comment.commentId,
             commentContent: comment.commentContent,
             commentOwnerUsername: comment.commentOwnerUsername,
-            commentOwnerId: comment.commentOwnerId
+            commentOwnerId: comment.commentOwnerId,
+            commentEdited: true
           }
         },
         headers: new Headers({

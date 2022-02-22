@@ -13,14 +13,28 @@
       *ngIf="!isLoading && postForm">
       <div class="row">
         <div class="col-xs-12">
-          <button
+          <div *ngIf="editMode">
+            <button
             type="submit"
             class="btn btn-success"
-            [disabled]="!postForm.valid">Save Post</button>
-          <button
+            [disabled]="!postForm.valid"
+            style="margin-right: 5px;">Save Post</button>
+            <button
             type="button"
             class="btn btn-danger"
             (click)="onCancel()">Cancel</button>
+          </div>
+          <div *ngIf="!editMode">
+            <button
+            type="submit"
+            class="btn btn-success"
+            [disabled]="!postForm.valid"
+            style="margin-right: 5px;">Commit Post</button>
+            <button
+            type="button"
+            class="btn btn-danger"
+            (click)="onCancel()">Cancel</button>
+          </div>
         </div>
       </div>
       <div class="row">

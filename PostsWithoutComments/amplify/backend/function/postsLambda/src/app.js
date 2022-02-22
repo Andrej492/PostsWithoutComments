@@ -208,13 +208,17 @@ function appendComments(postId, comment) {
 }
 
 app.post("/posts/:id", function(request,response) {
+  const timestamp = new Date().toISOString();
   var appendedComments = [];
   appendComments(request.params.id,
     {
       commentId: uuidv4(),
       commentContent: request.body.comments.commentContent,
       commentOwnerId: getUserId(request),
-      commentOwnerUsername: request.body.comments.commentOwnerUsername
+      commentOwnerUsername: request.body.comments.commentOwnerUsername,
+      commentEdited: request.body.comments.commentEdited,
+      commentCreatedAt: timestamp,
+      commentUpdatedAt: timestamp
     }
   ).then(res => {
       appendedComments = res;
@@ -244,27 +248,32 @@ app.post("/posts/:id", function(request,response) {
   });
 });
 
-function updateComment(postId, index, commentContent) {
+function updateComment(postId, index, commentContent, isEdited, timestampUpdate) {
   return dynamodb.update({
     TableName: tableName,
     Key: { id: postId },
-    UpdateExpression: 'set #comments['+ index +'].commentContent = :value',
+    UpdateExpression: 'set #comments['+ index +'].commentContent = :value1, #comments['+ index +'].commentEdited = :value2, #comments['+ index +'].commentUpdatedAt = :value3',
     ExpressionAttributeNames: {
       '#comments': 'comments'
     },
     ExpressionAttributeValues: {
-      ':value': commentContent
+      ':value1': commentContent,
+      ':value2': isEdited,
+      ':value3': timestampUpdate
     },
     ReturnValues: 'ALL_NEW'
   }).promise()
 }
 
 app.put("/posts/:id", function(request,response) {
+  const timestampUpdate = new Date().toISOString();
   var updatedComments = [];
   updateComment(
     request.params.id,
     request.body.comments.commentIndex,
-    request.body.comments.commentContent
+    request.body.comments.commentContent,
+    request.body.comments.commentEdited,
+    timestampUpdate
   )
   .then(res => {
     updatedComments = res;
