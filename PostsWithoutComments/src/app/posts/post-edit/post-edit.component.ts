@@ -77,7 +77,7 @@ export class PostEditComponent implements OnInit {
   }
 
   onCancel() {
-    this.router.navigate(['../'], { relativeTo: this.route});
+    this.router.navigate(['/posts']);
   }
 
   onClear() {

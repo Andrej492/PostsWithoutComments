@@ -44,6 +44,7 @@
       <ng-template #noCommentsYet><h3>No comments yet!</h3></ng-template>
       </ng-container>
       <app-comment-create
+        *ngIf="isLoggedIn"
         [postId] = "post.id">
       </app-comment-create>
     </div>

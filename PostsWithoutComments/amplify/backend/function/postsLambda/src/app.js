@@ -105,18 +105,47 @@ app.post("/posts", function(request, response) {
     }
   });
 });
+
+function updatePost( postId, postTitle, postContent, postImagePath) {
+    return dynamodb.update({
+      TableName: tableName,
+      Key: {
+        id: postId
+      },
+      UpdateExpression: 'set #postTitle = :value1, #postContent = :value2, #postImagePath = :value3',
+      ExpressionAttributeNames: {
+        '#postTitle': 'postTitle',
+        '#postContent': 'postContent',
+        '#postImagePath': 'postImagePath'
+      },
+      ExpressionAttributeValues: {
+        ':value1': postTitle,
+        ':value2': postContent,
+        ':value3': postImagePath,
+      },
+      ReturnValues: 'ALL_NEW'
+    }).promise()
+  }
 app.put("/posts", function(request, response) {
   let params = {
     TableName: tableName,
-    Item : {
-      id: request.body.id,
-      postTitle: request.body.postTitle,
-      postContent: request.body.postContent,
-      postImagePath: request.body.postImagePath,
-      postOwnerId: getUserId(request)
-    }
+    Key: {
+      id: request.body.id
+    },
+    UpdateExpression: 'set #postTitle = :value1, #postContent = :value2, #postImagePath = :value3',
+      ExpressionAttributeNames: {
+        '#postTitle': 'postTitle',
+        '#postContent': 'postContent',
+        '#postImagePath': 'postImagePath'
+      },
+      ExpressionAttributeValues: {
+        ':value1': request.body.postTitle,
+        ':value2': request.body.postContent,
+        ':value3': request.body.postImagePath,
+      },
+      ReturnValues: 'ALL_NEW'
   }
-  dynamodb.put(params, (err, result) => {
+  dynamodb.update(params, (err, result) => {
     if(err) {
       response.json({
         statusCode: 500,
@@ -127,7 +156,7 @@ app.put("/posts", function(request, response) {
       response.json({
         success: 'put call succeed!',
         url: request.url,
-        body: JSON.stringify(params.Item)
+        body: JSON.stringify(result)
       })
     }
   });
@@ -232,15 +261,21 @@ function updateComment(postId, index, commentContent) {
 
 app.put("/posts/:id", function(request,response) {
   var updatedComments = [];
-  updateComment(request.params.id, request.body.comments.commentIndex, request.body.comments.commentContent
-    ).then(res => {
-      updatedComments = res;
-      console.log(res);
-    }
+  updateComment(
+    request.params.id,
+    request.body.comments.commentIndex,
+    request.body.comments.commentContent
+  )
+  .then(res => {
+    updatedComments = res;
+    console.log(res);
+  }
   ).catch(err => console.log(err));
   let params = {
     TableName: tableName,
-    Key: { id: request.params.id },
+    Key: {
+      id: request.params.id
+    },
     Item : {
       comments: updatedComments
     }
@@ -258,6 +293,55 @@ app.put("/posts/:id", function(request,response) {
         url: request.url,
         body: JSON.stringify(params.Item)
       })
+    }
+  });
+});
+
+
+function deleteComment(postId, index) {
+  return dynamodb.update({
+    TableName: tableName,
+    Key: { id: postId },
+    UpdateExpression: 'REMOVE #comments['+ index +']',
+    ExpressionAttributeNames: {
+      '#comments': 'comments'
+    },
+    ReturnValues: 'ALL_NEW'
+  }).promise()
+}
+
+app.delete("/posts/:id", function(request, response) {
+  var updatedComments = [];
+  deleteComment(
+    request.params.id,
+    request.body.comments.commentIndex,
+  ).then(res => {
+    updatedComments = res;
+    console.log(res);
+  }).catch(err => console.log(err));
+  let params = {
+    TableName: tableName,
+    Key: {
+      id: request.params.id
+    },
+    Item : {
+      comments: updatedComments
+    }
+  }
+  dynamodb.update(params, (err, result)=> {
+    if(err) {
+      response.json({
+        statusCode: 500,
+        error: err.message,
+        url: request.url
+      });
+    } else {
+      response.json({
+        success: 'delete call succeed!',
+        statusCode: 200,
+        url: request.url,
+        body: JSON.stringify(params.Item)
+      });
     }
   });
 });

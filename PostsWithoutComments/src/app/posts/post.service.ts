@@ -137,7 +137,8 @@ export class PostService implements OnInit {
         })
       })
       .then((result) => {
-        const post: Post = JSON.parse(result.body);
+        const res = JSON.parse(result.body);
+        const post: Post = res.Attributes;
         this.posts[index] = post;
         this.postsChanged.next(this.posts.slice());
       })

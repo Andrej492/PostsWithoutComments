@@ -46,7 +46,6 @@ export class CommentService implements OnInit, OnDestroy{
       return this.comments;
     })
     .catch(err => {
-      console.log(err);
       return err;
     });
   }
@@ -116,14 +115,22 @@ export class CommentService implements OnInit, OnDestroy{
     });
   }
 
-  deleteComment(id: string, commentId: string) {
+  deleteComment(id: string, comment: Comment, index: number) {
     Auth.currentSession()
     .then((session) =>{
       API.del(
         'postsRestApi',
         `/posts/${id}`,
         {
-          body: {},
+          body: {
+            comments: {
+              commentIndex: index,
+              commentId: comment.commentId,
+              commentContent: comment.commentContent,
+              commentOwnerUsername: comment.commentOwnerUsername,
+              commentOwnerId: comment.commentOwnerId
+            }
+          },
           headers: new Headers({
             'Authorization': session.getIdToken().getJwtToken()
           })

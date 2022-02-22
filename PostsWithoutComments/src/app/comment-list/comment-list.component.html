@@ -16,7 +16,7 @@
           <button
             class="btn btn-danger"
             style="cursor: pointer;"
-            (click)="onDeleteComment(comment.commentId)"
+            (click)="onDeleteComment(comment)"
             [disabled]="comment.commentOwnerUsername !== loggedUser"
             >Delete Comment</button>
         </div>

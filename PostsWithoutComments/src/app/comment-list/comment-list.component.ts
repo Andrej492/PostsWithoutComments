@@ -45,8 +45,14 @@ export class CommentListComponent implements OnInit, OnDestroy {
     this.commentService.editedComment.next(commentUpdate);
   }
 
-  onDeleteComment(commentId: string) {
-    this.commentService.deleteComment(this.postById, commentId);
+  onDeleteComment(comment: Comment) {
+    let index: number;
+    for(let i = 0; i < this.comments.length; i++) {
+      if(this.comments[i].commentId === comment.commentId) {
+        index = i;
+      }
+    }
+    this.commentService.deleteComment(this.postById, comment, index);
     this.router.navigate(['/posts']);
   }
 
