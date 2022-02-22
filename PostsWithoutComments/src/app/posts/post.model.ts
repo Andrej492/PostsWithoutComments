@@ -7,6 +7,7 @@ export class Post {
     public postContent: string,
     public postImagePath: string,
     public postOwnerId: string,
+    public postOwnerUsername?: string,
     public comments?: Comment[]
     ) {}
 }

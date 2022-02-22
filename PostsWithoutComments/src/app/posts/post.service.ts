@@ -1,10 +1,10 @@
-import { Injectable, OnInit } from "@angular/core";
+import { Injectable, OnDestroy, OnInit } from "@angular/core";
 import { API, Auth } from "aws-amplify";
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject, Subject, Subscription } from "rxjs";
 import { Post } from "./post.model";
 
 @Injectable({providedIn: 'root'})
-export class PostService implements OnInit {
+export class PostService implements OnInit, OnDestroy {
   private posts: Post[] = [];
   postsChanged = new Subject<Post[]>();
   dataEdited = new BehaviorSubject<boolean>(false);
@@ -16,6 +16,7 @@ export class PostService implements OnInit {
   postGet: Post;
   isAuthenticated = new BehaviorSubject<boolean>(false);
   authUsername = new BehaviorSubject<string>('');
+  authUsernameSub: Subscription;
 
   ngOnInit(): void {}
 
@@ -54,6 +55,18 @@ export class PostService implements OnInit {
     })
   }
 
+  getPostUsername(): string {
+    let postUsername: string;
+    this.authUsernameSub = this.authUsername.subscribe((username: string)=> {
+      postUsername = username;
+    }, err => {
+      console.log(err);
+      let usr = 'not Logged';
+      postUsername = usr;
+    });
+    return postUsername;
+  }
+
   addPost(post: Post) {
     this.dataLoadFailed.next(false);
     this.dataIsLoading.next(true);
@@ -71,7 +84,8 @@ export class PostService implements OnInit {
           body: {
             postTitle: postTitle,
             postContent: postContent,
-            postImagePath: postImagePath
+            postImagePath: postImagePath,
+            postOwnerUsername: this.getPostUsername()
           },
           headers: new Headers({
             'Authorization': session.getIdToken().getJwtToken()
@@ -150,4 +164,9 @@ export class PostService implements OnInit {
       console.log(err);
     });
   }
+
+  ngOnDestroy(): void {
+    this.authUsernameSub.unsubscribe();
+  }
+
 }

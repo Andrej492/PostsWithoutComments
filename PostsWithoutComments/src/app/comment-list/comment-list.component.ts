@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Post } from '../posts/post.model';
 import { Comment } from './comment.model';
 import { CommentService } from './comment.service';
 
@@ -11,16 +12,20 @@ import { CommentService } from './comment.service';
 })
 export class CommentListComponent implements OnInit, OnDestroy {
   @Input() postById: string;
+  @Input() postInput: Post;
   commentSub: Subscription;
   comments: Comment[] = [];
   showButtonReply = false;
-  commentAuthor: string;
   loggedUser: string;
+  postAuthor: string;
 
   constructor(private commentService: CommentService,
     private router: Router) {}
 
   ngOnInit(): void {
+    console.log(this.postInput);
+    this.postAuthor = this.postInput.postOwnerUsername;
+    console.log(this.postAuthor);
     this.loggedUser = this.commentService.getCommentUsername();
     this.commentService.getComments(this.postById)
     .then((result) => {

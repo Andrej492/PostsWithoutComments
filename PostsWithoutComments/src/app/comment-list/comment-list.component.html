@@ -19,7 +19,7 @@
             class="btn btn-danger"
             style="cursor: pointer;"
             (click)="onDeleteComment(comment)"
-            [disabled]="comment.commentOwnerUsername !== loggedUser"
+            [disabled]="comment.commentOwnerUsername !== loggedUser && postAuthor !== loggedUser"
             >Delete</button>
             <div class="float-end" *ngIf="comment.commentEdited">Updated at: {{ comment.commentUpdatedAt }}</div>
             <div class="float-end" *ngIf="!comment.commentEdited">Created at: {{ comment.commentCreatedAt }}</div>

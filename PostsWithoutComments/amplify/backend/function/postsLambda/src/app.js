@@ -86,7 +86,8 @@ app.post("/posts", function(request, response) {
       postTitle: request.body.postTitle,
       postContent: request.body.postContent,
       postImagePath: request.body.postImagePath,
-      postOwnerId: getUserId(request)
+      postOwnerId: getUserId(request),
+      postOwnerUsername: request.body.postOwnerUsername
     }
   }
   dynamodb.put(params, (err, result) => {
@@ -106,26 +107,6 @@ app.post("/posts", function(request, response) {
   });
 });
 
-function updatePost( postId, postTitle, postContent, postImagePath) {
-    return dynamodb.update({
-      TableName: tableName,
-      Key: {
-        id: postId
-      },
-      UpdateExpression: 'set #postTitle = :value1, #postContent = :value2, #postImagePath = :value3',
-      ExpressionAttributeNames: {
-        '#postTitle': 'postTitle',
-        '#postContent': 'postContent',
-        '#postImagePath': 'postImagePath'
-      },
-      ExpressionAttributeValues: {
-        ':value1': postTitle,
-        ':value2': postContent,
-        ':value3': postImagePath,
-      },
-      ReturnValues: 'ALL_NEW'
-    }).promise()
-  }
 app.put("/posts", function(request, response) {
   let params = {
     TableName: tableName,
