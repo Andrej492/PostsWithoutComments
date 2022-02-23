@@ -67,7 +67,19 @@ export class CommentListComponent implements OnInit, OnDestroy {
   }
 
   onCommentLike(comment, i){
-    comment.likes = this.likeService.commentLike(comment);
+    let hasLiked = false;
+    if(comment.likes !== undefined) {
+      for(let i = 0; i < comment.likes.length; i++) {
+        if(comment.likes[i].likeOwnerUsername === this.loggedUser) {
+          hasLiked = true;
+        }
+      }
+    }
+    if(hasLiked){
+      console.log('You have already liked this comment!');
+    }
+    if(!hasLiked) {
+      comment.likes = this.likeService.commentLike(comment);
     this.comments[i] = comment;
     if(comment.countLikes === undefined) {
       comment.countLikes = 1;
@@ -75,6 +87,7 @@ export class CommentListComponent implements OnInit, OnDestroy {
       comment.countLikes += 1;
     }
     this.commentService.commentsChanged.next(this.comments.slice());
+    }
   }
 
   ngOnDestroy(): void {
