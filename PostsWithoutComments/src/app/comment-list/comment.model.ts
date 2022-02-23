@@ -1,3 +1,5 @@
+import { Like } from "./likes/like.model";
+
 export class Comment {
   constructor(
     public commentId: string,
@@ -7,6 +9,8 @@ export class Comment {
     public commentIndex?: number,
     public commentEdited?: boolean,
     public commentCreatedAt?: Date,
-    public commentUpdatedAt?: Date
+    public commentUpdatedAt?: Date,
+    public countLikes?: number,
+    public likes?: Like[]
     ) {}
 }

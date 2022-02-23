@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { Post } from '../posts/post.model';
 import { Comment } from './comment.model';
 import { CommentService } from './comment.service';
+import { LikeService } from './likes/likes.service';
 
 @Component({
   selector: 'app-comment-list',
@@ -19,7 +20,9 @@ export class CommentListComponent implements OnInit, OnDestroy {
   loggedUser: string;
   postAuthor: string;
 
-  constructor(private commentService: CommentService,
+  constructor(
+    private commentService: CommentService,
+    private likeService: LikeService,
     private router: Router) {}
 
   ngOnInit(): void {
@@ -61,6 +64,17 @@ export class CommentListComponent implements OnInit, OnDestroy {
 
   toggleComment(close: boolean): void {
     this.showButtonReply = close;
+  }
+
+  onCommentLike(comment, i){
+    comment.likes = this.likeService.commentLike(comment);
+    this.comments[i] = comment;
+    if(comment.countLikes === undefined) {
+      comment.countLikes = 1;
+    } else {
+      comment.countLikes += 1;
+    }
+    this.commentService.commentsChanged.next(this.comments.slice());
   }
 
   ngOnDestroy(): void {

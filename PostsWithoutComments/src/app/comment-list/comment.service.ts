@@ -3,6 +3,8 @@ import { API, Auth } from "aws-amplify";
 import { BehaviorSubject, Observable, Subject, Subscription } from "rxjs";
 import { PostService } from "../posts/post.service";
 import { Comment } from "./comment.model";
+import { Like } from "./likes/like.model";
+import { LikeService } from "./likes/likes.service";
 
 @Injectable({providedIn: 'root'})
 export class CommentService implements OnInit, OnDestroy{
@@ -13,7 +15,8 @@ export class CommentService implements OnInit, OnDestroy{
   authUsernameSub: Subscription;
   commentUsername: string = 'not Logged';
 
-  constructor(private postService: PostService) {}
+  constructor(
+    private postService: PostService) {}
 
   ngOnInit(): void {}
 

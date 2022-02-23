@@ -16,6 +16,7 @@ import { PostItemComponent } from './posts/post-list/post-item/post-item.compone
 import { PostStartComponent } from './posts/post-start/post-start.component';
 import { CommentListComponent } from './comment-list/comment-list.component';
 import { CommentCreateComponent } from './comment-list/comment-create/comment-create.component';
+import { LikesComponent } from './comment-list/likes/likes.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { CommentCreateComponent } from './comment-list/comment-create/comment-cr
     PostItemComponent,
     PostStartComponent,
     CommentListComponent,
-    CommentCreateComponent
+    CommentCreateComponent,
+    LikesComponent
   ],
   imports: [
     BrowserModule,
