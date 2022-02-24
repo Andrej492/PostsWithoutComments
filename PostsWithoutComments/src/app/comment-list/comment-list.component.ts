@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs';
 import { Post } from '../posts/post.model';
 import { Comment } from './comment.model';
 import { CommentService } from './comment.service';
+import { Dislike } from './likes/dislike.model';
+import { Like } from './likes/like.model';
 import { LikeService } from './likes/likes.service';
 
 @Component({
@@ -66,28 +68,92 @@ export class CommentListComponent implements OnInit, OnDestroy {
     this.showButtonReply = close;
   }
 
-  onCommentLike(comment, i){
+  onLikeComment(comment, index){
+    let userAlreadyDislikedCommentLikeIndex: number;
+    if(comment.dislikes !== undefined) {
+      userAlreadyDislikedCommentLikeIndex = this.hasDisliked(comment.dislikes);
+    }
     let hasLiked = false;
     if(comment.likes !== undefined) {
       for(let i = 0; i < comment.likes.length; i++) {
-        if(comment.likes[i].likeOwnerUsername === this.loggedUser) {
+        if(comment.likes[i].likeOwnerUsername === this.loggedUser ) {
           hasLiked = true;
         }
       }
     }
-    if(hasLiked){
-      console.log('You have already liked this comment!');
-    }
     if(!hasLiked) {
-      comment.likes = this.likeService.commentLike(comment);
-    this.comments[i] = comment;
-    if(comment.countLikes === undefined) {
-      comment.countLikes = 1;
+      let commentUpdated: Comment;
+      commentUpdated = this.likeService.commentLike(comment, index);
+      this.comments[index] = commentUpdated;
+      if(comment.countLikes === undefined) {
+        comment.countLikes = 1;
+      } else {
+        comment.countLikes += 1;
+      }
     } else {
-      comment.countLikes += 1;
+      console.log('Cannot like the same comment twice by same user!');
+    }
+    if(userAlreadyDislikedCommentLikeIndex >= 0) {
+      this.likeService.deleteDislike(comment, userAlreadyDislikedCommentLikeIndex);
+      comment.countDislikes -= 1;
+      this.comments[index] = comment;
     }
     this.commentService.commentsChanged.next(this.comments.slice());
+    console.log(this.comments);
+  }
+
+  onDislikeComment(comment, index) {
+    let userAlreadyLikedCommentLikeIndex: number;
+    if(comment.likes !== undefined) {
+      userAlreadyLikedCommentLikeIndex = this.hasLiked(comment.likes);
     }
+    let hasDisliked = false;
+    if(comment.dislikes !== undefined) {
+      for(let i = 0; i < comment.dislikes.length; i++) {
+        if(comment.dislikes[i].dislikeOwnerUsername === this.loggedUser) {
+          hasDisliked = true;
+        }
+      }
+    }
+    if(!hasDisliked) {
+      let commentUpdated: Comment;
+      commentUpdated = this.likeService.commentDislike(comment, index);
+      this.comments[index] = commentUpdated;
+      if(comment.countDislikes === undefined) {
+        comment.countDislikes = 1;
+      } else {
+        comment.countDislikes += 1;
+      }
+    } else {
+      console.log('Cannot dislike the same comment twice by same user!');
+    }
+    if(userAlreadyLikedCommentLikeIndex >= 0) {
+      this.likeService.deleteLike(comment, userAlreadyLikedCommentLikeIndex);
+      comment.countLikes -= 1;
+      this.comments[index] = comment;
+    }
+    this.commentService.commentsChanged.next(this.comments.slice());
+    console.log(this.comments);
+  }
+
+  hasLiked(likes: Like[]) : number {
+    let index: number = -5;
+    for(let i = 0; i < likes.length; i++) {
+      if(likes[i].likeOwnerUsername === this.loggedUser) {
+        index = i;
+      }
+    }
+    return index;
+  }
+
+  hasDisliked(dislikes: Dislike[]) : number {
+    let index: number = -5;
+    for(let i = 0; i < dislikes.length; i++) {
+      if(dislikes[i].dislikeOwnerUsername === this.loggedUser) {
+        index = i;
+      }
+    }
+    return index;
   }
 
   ngOnDestroy(): void {

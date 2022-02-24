@@ -8,10 +8,16 @@
         <span class="text3 text3o" style="margin-left: 22px;">Dislikes</span><span class="thumbup"><i class="fa fa-thumbs-up thumbupo"></i></span><span class="text4 text4i">0</span> -->
         <button
           type="button"
-          class="btn btn-primary" (click)="onCommentLike(comment, i)"
+          class="btn btn-primary" (click)="onLikeComment(comment, i)"
           [disabled]="loggedUser === 'not Logged'"> Like
         </button>
         <p>Likes Count: {{comment.countLikes}}</p>
+        <button
+          type="button"
+          class="btn btn-secondary" (click)="onDislikeComment(comment, i)"
+          [disabled]="loggedUser === 'not Logged'"> Dislike
+        </button>
+        <p>Dislikes Count: {{comment.countDislikes}}</p>
       </div>
       <div class="row">
         <div class="col-xs-12">
